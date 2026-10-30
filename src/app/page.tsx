@@ -8,6 +8,7 @@ import AnalyticsCharts from "@/components/AnalyticsCharts";
 import WalletList, { WalletItem } from "@/components/WalletList";
 import SavingsGoalsList, { SavingsGoalItem } from "@/components/SavingsGoalsList";
 import TransactionFeed, { TransactionItem } from "@/components/TransactionFeed";
+import FinancialCalendar, { CalendarPlanItem } from "@/components/FinancialCalendar";
 import QuickAddModal from "@/components/QuickAddModal";
 import AddWalletModal from "@/components/AddWalletModal";
 import AddGoalModal from "@/components/AddGoalModal";
@@ -30,6 +31,7 @@ export default function Home() {
   const [wallets, setWallets] = useState<WalletItem[]>([]);
   const [goals, setGoals] = useState<SavingsGoalItem[]>([]);
   const [transactions, setTransactions] = useState<TransactionItem[]>([]);
+  const [calendarPlans, setCalendarPlans] = useState<CalendarPlanItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [currentMonthName, setCurrentMonthName] = useState("Bulan Berjalan");
 
@@ -80,11 +82,15 @@ export default function Home() {
           if (savedWallets) setWallets(JSON.parse(savedWallets));
           if (savedGoals) setGoals(JSON.parse(savedGoals));
           if (savedTx) setTransactions(JSON.parse(savedTx));
+          const savedPlans = localStorage.getItem("fintrack_calendar_plans");
+          if (savedPlans) setCalendarPlans(JSON.parse(savedPlans));
         } catch (err) {
           console.error(err);
         }
       })
       .finally(() => {
+        const savedPlans = localStorage.getItem("fintrack_calendar_plans");
+        if (savedPlans) setCalendarPlans(JSON.parse(savedPlans));
         setIsLoaded(true);
       });
   }, []);
@@ -96,10 +102,11 @@ export default function Home() {
       localStorage.setItem("fintrack_wallets", JSON.stringify(wallets));
       localStorage.setItem("fintrack_goals", JSON.stringify(goals));
       localStorage.setItem("fintrack_transactions", JSON.stringify(transactions));
+      localStorage.setItem("fintrack_calendar_plans", JSON.stringify(calendarPlans));
     } catch (e) {
       console.error(e);
     }
-  }, [wallets, goals, transactions, isLoaded]);
+  }, [wallets, goals, transactions, calendarPlans, isLoaded]);
 
   // Handle Add Transaction
   const handleAddTransaction = async (newTx: TransactionItem) => {
@@ -344,6 +351,23 @@ export default function Home() {
               {/* 6. TRANSACTIONS */}
               <TransactionFeed transactions={transactions} />
             </>
+          )}
+
+          {activeTab === "calendar" && (
+            <div className="space-y-4">
+              <FinancialCalendar
+                plans={calendarPlans}
+                onAddPlan={(newPlan) => setCalendarPlans((prev) => [...prev, newPlan])}
+                onTogglePaid={(planId) =>
+                  setCalendarPlans((prev) =>
+                    prev.map((p) => (p.id === planId ? { ...p, isPaid: !p.isPaid } : p))
+                  )
+                }
+                onDeletePlan={(planId) =>
+                  setCalendarPlans((prev) => prev.filter((p) => p.id !== planId))
+                }
+              />
+            </div>
           )}
 
           {activeTab === "transactions" && (

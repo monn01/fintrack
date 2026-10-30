@@ -8,6 +8,7 @@ import {
   PieChart, 
   Plus, 
   Wallet,
+  Calendar,
   LogOut,
   Heart
 } from "lucide-react";
@@ -30,10 +31,11 @@ export default function Navigation({
 
   const navItems = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { id: "transactions", label: "Transaksi", icon: ArrowLeftRight },
-    { id: "wallets", label: "Dompet & Akun", icon: Wallet },
+    { id: "calendar", label: "Kalender & Tagihan", icon: Calendar },
+    { id: "transactions", label: "Riwayat Transaksi", icon: ArrowLeftRight },
+    { id: "wallets", label: "Rekening & Dompet", icon: Wallet },
     { id: "goals", label: "Target Tabungan", icon: PiggyBank },
-    { id: "analytics", label: "Laporan & Grafik", icon: PieChart },
+    { id: "analytics", label: "Laporan Arus Kas", icon: PieChart },
   ];
 
   const handleLogout = async () => {
@@ -50,36 +52,33 @@ export default function Navigation({
 
   return (
     <>
-      {/* DESKTOP SIDEBAR (TAILADMIN CLEAN WHITE / BLUE STYLE) */}
-      <aside className="hidden md:flex flex-col w-64 border-r border-slate-200 bg-white p-5 shrink-0 justify-between select-none min-h-screen sticky top-0">
+      {/* DESKTOP SIDEBAR */}
+      <aside className="hidden md:flex flex-col w-64 border-r border-slate-200/90 bg-white p-5 shrink-0 justify-between select-none min-h-screen sticky top-0">
         <div>
           {/* BRAND LOGO */}
           <div className="flex items-center gap-3 px-2 mb-8">
-            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-black text-xl shadow-md shadow-blue-500/25">
+            <div className="w-10 h-10 rounded-xl bg-[#0052cc] flex items-center justify-center text-white font-black text-xl shadow-sm">
               F
             </div>
             <div>
-              <span className="font-bold text-lg tracking-tight text-slate-900 flex items-center gap-1.5">
+              <span className="font-bold text-lg tracking-tight text-slate-900 block">
                 FinTrack
-                <span className="text-[10px] font-semibold uppercase bg-blue-50 text-blue-600 border border-blue-200 px-1.5 py-0.5 rounded">
-                  Pro
-                </span>
               </span>
-              <p className="text-[11px] text-slate-500 font-medium">Personal Finance System</p>
+              <p className="text-xs text-slate-400 font-medium">Digital Banking Suite</p>
             </div>
           </div>
 
           {/* PRIMARY QUICK ACTION */}
           <button
             onClick={onOpenQuickAdd}
-            className="w-full mb-6 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-xl transition-all duration-150 active:scale-[0.98] shadow-sm shadow-blue-500/20 text-xs cursor-pointer"
+            className="w-full mb-6 flex items-center justify-center gap-2 bg-[#0052cc] hover:bg-[#0747a6] text-white font-bold py-2.5 px-4 rounded-xl transition-all duration-150 active:scale-[0.98] shadow-sm text-xs cursor-pointer"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>Catat Transaksi</span>
           </button>
 
           {/* NAVIGATION LINKS */}
-          <div className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+          <div className="mb-2 px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">
             Menu Utama
           </div>
           <nav className="space-y-1">
@@ -90,13 +89,13 @@ export default function Navigation({
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
                     isActive
-                      ? "bg-blue-50 text-blue-700 border border-blue-200/60"
+                      ? "bg-blue-50 text-[#0052cc] border border-blue-200/60"
                       : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                   }`}
                 >
-                  <Icon className={`w-4 h-4 stroke-[2] ${isActive ? "text-blue-600" : "text-slate-400"}`} />
+                  <Icon className={`w-4 h-4 stroke-[2] ${isActive ? "text-[#0052cc]" : "text-slate-400"}`} />
                   <span>{item.label}</span>
                 </button>
               );
@@ -110,7 +109,7 @@ export default function Navigation({
             <div className="flex items-center gap-2.5 overflow-hidden">
               <div
                 className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white shadow-sm shrink-0 ${
-                  isPartner ? "bg-rose-500" : "bg-blue-600"
+                  isPartner ? "bg-rose-500" : "bg-[#0052cc]"
                 }`}
               >
                 {isPartner ? <Heart className="w-4 h-4 fill-current" /> : "M"}
@@ -137,11 +136,11 @@ export default function Navigation({
       </aside>
 
       {/* MOBILE BOTTOM NAVIGATION BAR */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-2 flex items-center justify-around shadow-lg">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-2 flex items-center justify-around shadow-lg">
         <button
           onClick={() => setActiveTab("dashboard")}
           className={`flex flex-col items-center gap-1 p-1 text-xs cursor-pointer ${
-            activeTab === "dashboard" ? "text-blue-600 font-semibold" : "text-slate-500"
+            activeTab === "dashboard" ? "text-[#0052cc] font-bold" : "text-slate-500"
           }`}
         >
           <LayoutDashboard className="w-5 h-5" />
@@ -149,42 +148,42 @@ export default function Navigation({
         </button>
 
         <button
-          onClick={() => setActiveTab("transactions")}
+          onClick={() => setActiveTab("calendar")}
           className={`flex flex-col items-center gap-1 p-1 text-xs cursor-pointer ${
-            activeTab === "transactions" ? "text-blue-600 font-semibold" : "text-slate-500"
+            activeTab === "calendar" ? "text-[#0052cc] font-bold" : "text-slate-500"
           }`}
         >
-          <ArrowLeftRight className="w-5 h-5" />
-          <span className="text-[10px]">Transaksi</span>
+          <Calendar className="w-5 h-5" />
+          <span className="text-[10px]">Kalender</span>
         </button>
 
         {/* FLOATING ACTION BUTTON */}
         <button
           onClick={onOpenQuickAdd}
           aria-label="Catat Transaksi"
-          className="w-12 h-12 -mt-5 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 active:scale-95 transition-transform cursor-pointer"
+          className="w-12 h-12 -mt-5 rounded-full bg-[#0052cc] text-white flex items-center justify-center shadow-lg shadow-blue-500/30 active:scale-95 transition-transform cursor-pointer"
         >
           <Plus className="w-6 h-6 stroke-[2.5]" />
         </button>
 
         <button
-          onClick={() => setActiveTab("goals")}
+          onClick={() => setActiveTab("transactions")}
           className={`flex flex-col items-center gap-1 p-1 text-xs cursor-pointer ${
-            activeTab === "goals" ? "text-blue-600 font-semibold" : "text-slate-500"
+            activeTab === "transactions" ? "text-[#0052cc] font-bold" : "text-slate-500"
           }`}
         >
-          <PiggyBank className="w-5 h-5" />
-          <span className="text-[10px]">Goals</span>
+          <ArrowLeftRight className="w-5 h-5" />
+          <span className="text-[10px]">Mutasi</span>
         </button>
 
         <button
           onClick={() => setActiveTab("wallets")}
           className={`flex flex-col items-center gap-1 p-1 text-xs cursor-pointer ${
-            activeTab === "wallets" ? "text-blue-600 font-semibold" : "text-slate-500"
+            activeTab === "wallets" ? "text-[#0052cc] font-bold" : "text-slate-500"
           }`}
         >
           <Wallet className="w-5 h-5" />
-          <span className="text-[10px]">Dompet</span>
+          <span className="text-[10px]">Rekening</span>
         </button>
       </div>
     </>
