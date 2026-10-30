@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
-import MetricCards from "@/components/MetricCards";
+import BankingHero from "@/components/BankingHero";
 import AiAdvisorWidget from "@/components/AiAdvisorWidget";
 import AnalyticsCharts from "@/components/AnalyticsCharts";
 import WalletList, { WalletItem } from "@/components/WalletList";
@@ -12,7 +12,7 @@ import QuickAddModal from "@/components/QuickAddModal";
 import AddWalletModal from "@/components/AddWalletModal";
 import AddGoalModal from "@/components/AddGoalModal";
 import DepositGoalModal from "@/components/DepositGoalModal";
-import { Plus, Heart, Sparkles, Building2, PiggyBank, LogOut } from "lucide-react";
+import { Plus, LogOut, ArrowLeftRight, CreditCard, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -31,9 +31,9 @@ export default function Home() {
   const [goals, setGoals] = useState<SavingsGoalItem[]>([]);
   const [transactions, setTransactions] = useState<TransactionItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [currentMonthName, setCurrentMonthName] = useState("Periode Berjalan");
+  const [currentMonthName, setCurrentMonthName] = useState("Bulan Berjalan");
 
-  // Fetch current authenticated user & month
+  // Fetch user session
   useEffect(() => {
     setCurrentMonthName(new Intl.DateTimeFormat("id-ID", { month: "long", year: "numeric" }).format(new Date()));
     fetch("/api/auth/me")
@@ -89,7 +89,7 @@ export default function Home() {
       });
   }, []);
 
-  // Save to LocalStorage whenever state changes
+  // Save to LocalStorage
   useEffect(() => {
     if (!isLoaded) return;
     try {
@@ -101,11 +101,10 @@ export default function Home() {
     }
   }, [wallets, goals, transactions, isLoaded]);
 
-  // Handle Add Transaction (Local + Supabase Sync)
+  // Handle Add Transaction
   const handleAddTransaction = async (newTx: TransactionItem) => {
     setTransactions((prev) => [newTx, ...prev]);
 
-    // Update Wallet Balances accordingly
     setWallets((prev) =>
       prev.map((w) => {
         if (newTx.type === "INCOME" && w.name === newTx.wallet) {
@@ -122,7 +121,6 @@ export default function Home() {
       })
     );
 
-    // Sync to Supabase
     try {
       await fetch("/api/data", {
         method: "POST",
@@ -134,7 +132,7 @@ export default function Home() {
     }
   };
 
-  // Handle Add Wallet (Local + Supabase Sync)
+  // Handle Add Wallet
   const handleAddWallet = async (newWallet: WalletItem) => {
     setWallets((prev) => [...prev, newWallet]);
 
@@ -149,7 +147,7 @@ export default function Home() {
     }
   };
 
-  // Handle Add Goal (Local + Supabase Sync)
+  // Handle Add Goal
   const handleAddGoal = async (newGoal: SavingsGoalItem) => {
     setGoals((prev) => [...prev, newGoal]);
 
@@ -164,11 +162,11 @@ export default function Home() {
     }
   };
 
-  // Handle Deposit to Goal (Local + Supabase Sync)
+  // Handle Deposit to Goal
   const handleDepositGoal = async (goalId: string, walletId: string, amount: number) => {
     const sourceWallet = wallets.find((w) => w.id === walletId);
     if (!sourceWallet || sourceWallet.balance < amount) {
-      alert("Saldo dompet tidak mencukupi untuk melakukan setoran tabungan ini.");
+      alert("Saldo rekening tidak mencukupi untuk melakukan setoran tabungan ini.");
       return;
     }
 
@@ -220,7 +218,6 @@ export default function Home() {
     .reduce((acc, curr) => acc + curr.amount, 0);
 
   const totalSavings = goals.reduce((acc, curr) => acc + curr.currentAmount, 0);
-  const budgetLimit = 8000000;
 
   // Category Breakdown
   const categoryMap = new Map<string, number>();
@@ -231,7 +228,7 @@ export default function Home() {
       categoryMap.set(t.category, current + t.amount);
     });
 
-  const categoryColors = ["#2563eb", "#3b82f6", "#0ea5e9", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"];
+  const categoryColors = ["#0052cc", "#0747a6", "#0ea5e9", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"];
   const dynamicCategoryData = Array.from(categoryMap.entries()).map(([name, value], i) => ({
     name,
     value,
@@ -248,7 +245,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="flex min-h-screen bg-[#f1f5f9] text-slate-800 font-sans selection:bg-blue-100 selection:text-blue-700">
+    <div className="flex min-h-screen bg-[#f4f6fa] text-slate-800 font-sans selection:bg-blue-100 selection:text-blue-700">
       {/* NAVIGATION */}
       <Navigation
         activeTab={activeTab}
@@ -257,32 +254,26 @@ export default function Home() {
         currentUser={currentUser}
       />
 
-      {/* MAIN CONTENT */}
-      <main className="flex-1 flex flex-col min-w-0 pb-24 md:pb-10">
-        {/* TOPBAR (TAILADMIN CLEAN HEADER) */}
-        <header className="h-16 border-b border-slate-200/80 px-6 sm:px-8 flex items-center justify-between bg-white sticky top-0 z-30 shadow-2xs">
-          <div>
-            <h1 className="text-base font-bold text-slate-900 tracking-tight flex items-center gap-2">
-              Halo, {currentUser?.name || "Monn"}
-              <span className="text-xs font-normal text-slate-500 hidden sm:inline">• Periode {currentMonthName}</span>
-            </h1>
+      {/* MAIN CONTAINER */}
+      <main className="flex-1 flex flex-col min-w-0 pb-24 md:pb-12">
+        {/* TOPBAR (CLEAN BANKING HEADER) */}
+        <header className="h-16 border-b border-slate-200/90 px-6 sm:px-8 flex items-center justify-between bg-white sticky top-0 z-30 shadow-2xs">
+          <div className="flex items-center gap-3">
+            <span className="font-bold text-slate-900 text-sm sm:text-base">
+              FinTrack Digital
+            </span>
+            <span className="hidden sm:inline text-xs text-slate-400 font-medium">| {currentMonthName}</span>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs text-slate-600 font-medium">
-              <Heart className="w-3.5 h-3.5 text-rose-500" />
-              <span>Ruang Keuangan {currentUser?.user === "partner" ? "Pasangan" : "Bersama"}</span>
-            </div>
-
             <button
               onClick={() => setIsQuickAddOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm shadow-blue-500/20 transition-all active:scale-95 cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#0052cc] hover:bg-[#0747a6] text-white text-xs sm:text-sm font-semibold shadow-xs transition-all active:scale-95 cursor-pointer"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
               <span className="hidden sm:inline">Catat Transaksi</span>
             </button>
 
-            {/* LOGOUT BUTTON IN HEADER */}
             <button
               onClick={async () => {
                 await fetch("/api/auth/logout", { method: "POST" });
@@ -290,60 +281,32 @@ export default function Home() {
                 router.refresh();
               }}
               title="Keluar dari akun"
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-50 hover:bg-rose-50 border border-slate-200 text-slate-600 hover:text-rose-600 text-xs font-semibold transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 text-xs sm:text-sm font-semibold transition-all cursor-pointer"
             >
-              <LogOut className="w-4 h-4 text-slate-500 hover:text-rose-600" />
+              <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Keluar</span>
             </button>
           </div>
         </header>
 
-        {/* BODY */}
+        {/* CONTENT VIEWPORT */}
         <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl w-full mx-auto">
-          {/* WELCOME BANNER ON FRESH START */}
-          {wallets.length === 0 && (
-            <div className="p-6 rounded-2xl bg-white border border-blue-200 shadow-sm shadow-blue-500/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <Sparkles className="w-4 h-4 text-blue-600" />
-                  <h3 className="text-sm font-bold text-slate-900">Selamat Datang di FinTrack!</h3>
-                </div>
-                <p className="text-xs text-slate-600 leading-relaxed max-w-xl font-medium">
-                  Sistem pencatatan keuangan Anda siap digunakan. Tambahkan rekening bank, dompet digital, atau uang tunai Anda untuk mulai mengelola keuangan secara profesional.
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2.5">
-                <button
-                  onClick={() => setIsAddWalletOpen(true)}
-                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shadow-sm shadow-blue-500/20"
-                >
-                  <Building2 className="w-4 h-4" />
-                  <span>Tambah Dompet</span>
-                </button>
-                <button
-                  onClick={() => setIsAddGoalOpen(true)}
-                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer"
-                >
-                  <PiggyBank className="w-4 h-4 text-slate-600" />
-                  <span>Buat Target</span>
-                </button>
-              </div>
-            </div>
-          )}
-
           {activeTab === "dashboard" && (
             <>
-              {/* 1. METRICS */}
-              <MetricCards
+              {/* 1. BANKING HERO DASHBOARD (myBCA / GOPAY STYLE) */}
+              <BankingHero
+                userName={currentUser?.name || "Monn"}
+                isPartner={currentUser?.user === "partner"}
                 netWorth={totalNetWorth}
                 monthlyIncome={monthlyIncome}
                 monthlyExpense={monthlyExpense}
                 totalSavings={totalSavings}
-                budgetLimit={budgetLimit}
+                onOpenQuickAdd={() => setIsQuickAddOpen(true)}
+                onOpenAddWallet={() => setIsAddWalletOpen(true)}
+                onOpenAddGoal={() => setIsAddGoalOpen(true)}
               />
 
-              {/* 2. AI ADVISOR */}
+              {/* 2. AI FINANCIAL ADVISOR WIDGET */}
               <AiAdvisorWidget
                 summary={{
                   totalBalance: totalNetWorth,

@@ -1,52 +1,29 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;        /* slate-50 */
-  --foreground: #0f172a;        /* slate-900 */
-  --card: #ffffff;              /* pure white card */
-  --card-foreground: #0f172a;
-  --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #2563eb;           /* tailadmin brand blue (blue-600) */
-  --primary-hover: #1d4ed8;     /* blue-700 */
+  --background: #f4f6fa;        /* Clean banking light background */
+  --foreground: #1e293b;        /* Slate-800 for high readability */
+  --card: #ffffff;
+  --card-foreground: #1e293b;
+  --primary: #0052cc;           /* BCA/GoPay Corporate Deep Blue */
+  --primary-hover: #0747a6;
   --primary-foreground: #ffffff;
-  --secondary: #f1f5f9;         /* slate-100 */
-  --secondary-foreground: #334155;
-  --muted: #f8fafc;
-  --muted-foreground: #64748b;  /* slate-500 */
-  --accent: #eff6ff;            /* blue-50 */
-  --accent-foreground: #1d4ed8;
-  --destructive: #ef4444;       /* red-500 */
-  --destructive-foreground: #ffffff;
-  --border: #e2e8f0;           /* slate-200 */
-  --input: #e2e8f0;
-  --ring: #3b82f6;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-border: var(--border);
-  --color-primary: var(--primary);
-  --color-destructive: var(--destructive);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --secondary: #e9eef6;
+  --border: #e2e8f0;
 }
 
 body {
-  background-color: #f1f5f9; /* Slate 100 Tailadmin canvas */
-  color: #0f172a;
-  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  min-height: 100dvh;
+  background-color: #f4f6fa;
+  color: #1e293b;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;              /* Normal human-readable base font size (bukan kekecilan) */
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Financial numbers styling */
+/* Big readable banking numbers */
 .font-numeric {
-  font-family: var(--font-mono), monospace;
+  font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
 }
