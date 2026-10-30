@@ -52,8 +52,8 @@ export default function Navigation({
 
   return (
     <>
-      {/* DESKTOP SIDEBAR (LOCKED / FIXED POSITION) */}
-      <aside className="hidden md:flex flex-col w-64 border-r border-slate-200/90 bg-white p-5 shrink-0 justify-between select-none h-screen sticky top-0 shadow-2xs overflow-y-auto self-start z-30">
+      {/* DESKTOP SIDEBAR (ROCK-SOLID FIXED POSITION) */}
+      <aside className="hidden md:flex flex-col w-64 border-r border-slate-200/90 bg-white p-5 justify-between select-none fixed top-0 bottom-0 left-0 h-screen z-40 overflow-y-auto">
         <div>
           {/* BRAND LOGO WITH OFFICIAL FT ICON */}
           <div className="flex items-center gap-3 px-2 mb-8">
