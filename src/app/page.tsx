@@ -45,21 +45,47 @@ export default function Home() {
       .catch((err) => console.error(err));
   }, []);
 
-  // Load from LocalStorage for instant real persistence
+  // Load from Supabase API (with LocalStorage backup)
   useEffect(() => {
-    try {
-      const savedWallets = localStorage.getItem("fintrack_wallets");
-      const savedGoals = localStorage.getItem("fintrack_goals");
-      const savedTx = localStorage.getItem("fintrack_transactions");
+    fetch("/api/data")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          if (data.wallets && data.wallets.length > 0) setWallets(data.wallets);
+          else {
+            const savedWallets = localStorage.getItem("fintrack_wallets");
+            if (savedWallets) setWallets(JSON.parse(savedWallets));
+          }
 
-      if (savedWallets) setWallets(JSON.parse(savedWallets));
-      if (savedGoals) setGoals(JSON.parse(savedGoals));
-      if (savedTx) setTransactions(JSON.parse(savedTx));
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsLoaded(true);
-    }
+          if (data.goals && data.goals.length > 0) setGoals(data.goals);
+          else {
+            const savedGoals = localStorage.getItem("fintrack_goals");
+            if (savedGoals) setGoals(JSON.parse(savedGoals));
+          }
+
+          if (data.transactions && data.transactions.length > 0) setTransactions(data.transactions);
+          else {
+            const savedTx = localStorage.getItem("fintrack_transactions");
+            if (savedTx) setTransactions(JSON.parse(savedTx));
+          }
+        }
+      })
+      .catch((e) => {
+        console.error("Supabase load error, falling back to local:", e);
+        try {
+          const savedWallets = localStorage.getItem("fintrack_wallets");
+          const savedGoals = localStorage.getItem("fintrack_goals");
+          const savedTx = localStorage.getItem("fintrack_transactions");
+          if (savedWallets) setWallets(JSON.parse(savedWallets));
+          if (savedGoals) setGoals(JSON.parse(savedGoals));
+          if (savedTx) setTransactions(JSON.parse(savedTx));
+        } catch (err) {
+          console.error(err);
+        }
+      })
+      .finally(() => {
+        setIsLoaded(true);
+      });
   }, []);
 
   // Save to LocalStorage whenever state changes
@@ -74,8 +100,8 @@ export default function Home() {
     }
   }, [wallets, goals, transactions, isLoaded]);
 
-  // Handle Add Transaction
-  const handleAddTransaction = (newTx: TransactionItem) => {
+  // Handle Add Transaction (Local + Supabase Sync)
+  const handleAddTransaction = async (newTx: TransactionItem) => {
     setTransactions((prev) => [newTx, ...prev]);
 
     // Update Wallet Balances accordingly
@@ -94,20 +120,51 @@ export default function Home() {
         return w;
       })
     );
+
+    // Sync to Supabase
+    try {
+      await fetch("/api/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "ADD_TRANSACTION", payload: newTx }),
+      });
+    } catch (err) {
+      console.error("Failed to sync transaction to Supabase:", err);
+    }
   };
 
-  // Handle Add Wallet
-  const handleAddWallet = (newWallet: WalletItem) => {
+  // Handle Add Wallet (Local + Supabase Sync)
+  const handleAddWallet = async (newWallet: WalletItem) => {
     setWallets((prev) => [...prev, newWallet]);
+
+    try {
+      await fetch("/api/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "ADD_WALLET", payload: newWallet }),
+      });
+    } catch (err) {
+      console.error("Failed to sync wallet to Supabase:", err);
+    }
   };
 
-  // Handle Add Goal
-  const handleAddGoal = (newGoal: SavingsGoalItem) => {
+  // Handle Add Goal (Local + Supabase Sync)
+  const handleAddGoal = async (newGoal: SavingsGoalItem) => {
     setGoals((prev) => [...prev, newGoal]);
+
+    try {
+      await fetch("/api/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "ADD_GOAL", payload: newGoal }),
+      });
+    } catch (err) {
+      console.error("Failed to sync goal to Supabase:", err);
+    }
   };
 
-  // Handle Deposit to Goal
-  const handleDepositGoal = (goalId: string, walletId: string, amount: number) => {
+  // Handle Deposit to Goal (Local + Supabase Sync)
+  const handleDepositGoal = async (goalId: string, walletId: string, amount: number) => {
     // 1. Deduct from wallet
     const sourceWallet = wallets.find((w) => w.id === walletId);
     if (!sourceWallet || sourceWallet.balance < amount) {
@@ -138,6 +195,20 @@ export default function Home() {
       tags: ["#tabungan"],
     };
     setTransactions((prev) => [depositTx, ...prev]);
+
+    // Sync to Supabase
+    try {
+      await fetch("/api/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "DEPOSIT_GOAL",
+          payload: { goalId, walletId, amount },
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to sync deposit to Supabase:", err);
+    }
   };
 
   // Real Metric Calculations
