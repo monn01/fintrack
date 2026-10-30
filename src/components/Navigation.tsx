@@ -53,12 +53,12 @@ export default function Navigation({
   return (
     <>
       {/* DESKTOP SIDEBAR */}
-      <aside className="hidden md:flex flex-col w-64 border-r border-slate-200/90 bg-white p-5 shrink-0 justify-between select-none min-h-screen sticky top-0">
+      <aside className="hidden md:flex flex-col w-64 border-r border-slate-200/90 bg-white p-5 shrink-0 justify-between select-none min-h-screen sticky top-0 shadow-2xs">
         <div>
-          {/* BRAND LOGO */}
+          {/* BRAND LOGO WITH OFFICIAL FT ICON */}
           <div className="flex items-center gap-3 px-2 mb-8">
-            <div className="w-10 h-10 rounded-xl bg-[#0052cc] flex items-center justify-center text-white font-black text-xl shadow-sm">
-              F
+            <div className="w-10 h-10 rounded-xl bg-[#0052cc] flex items-center justify-center text-white font-black text-xl shadow-sm tracking-tighter">
+              FT
             </div>
             <div>
               <span className="font-bold text-lg tracking-tight text-slate-900 block">
@@ -135,55 +135,57 @@ export default function Navigation({
         </div>
       </aside>
 
-      {/* MOBILE BOTTOM NAVIGATION BAR */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-2 flex items-center justify-around shadow-lg">
+      {/* MOBILE BOTTOM NAVIGATION BAR (POLISHED FOR HUMAN THUMBS) */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1.5 flex items-center justify-around shadow-lg safe-area-bottom">
         <button
           onClick={() => setActiveTab("dashboard")}
-          className={`flex flex-col items-center gap-1 p-1 text-xs cursor-pointer ${
-            activeTab === "dashboard" ? "text-[#0052cc] font-bold" : "text-slate-500"
+          className={`flex flex-col items-center justify-center flex-1 py-1 cursor-pointer transition-colors ${
+            activeTab === "dashboard" ? "text-[#0052cc] font-bold" : "text-slate-500 hover:text-slate-800"
           }`}
         >
           <LayoutDashboard className="w-5 h-5" />
-          <span className="text-[10px]">Home</span>
+          <span className="text-[11px] mt-0.5">Home</span>
         </button>
 
         <button
           onClick={() => setActiveTab("calendar")}
-          className={`flex flex-col items-center gap-1 p-1 text-xs cursor-pointer ${
-            activeTab === "calendar" ? "text-[#0052cc] font-bold" : "text-slate-500"
+          className={`flex flex-col items-center justify-center flex-1 py-1 cursor-pointer transition-colors ${
+            activeTab === "calendar" ? "text-[#0052cc] font-bold" : "text-slate-500 hover:text-slate-800"
           }`}
         >
           <Calendar className="w-5 h-5" />
-          <span className="text-[10px]">Kalender</span>
+          <span className="text-[11px] mt-0.5">Tagihan</span>
         </button>
 
         {/* FLOATING ACTION BUTTON */}
-        <button
-          onClick={onOpenQuickAdd}
-          aria-label="Catat Transaksi"
-          className="w-12 h-12 -mt-5 rounded-full bg-[#0052cc] text-white flex items-center justify-center shadow-lg shadow-blue-500/30 active:scale-95 transition-transform cursor-pointer"
-        >
-          <Plus className="w-6 h-6 stroke-[2.5]" />
-        </button>
+        <div className="flex-1 flex justify-center -mt-6">
+          <button
+            onClick={onOpenQuickAdd}
+            aria-label="Catat Transaksi"
+            className="w-13 h-13 rounded-full bg-[#0052cc] text-white flex items-center justify-center shadow-lg shadow-blue-500/35 active:scale-95 transition-transform cursor-pointer border-2 border-white"
+          >
+            <Plus className="w-6 h-6 stroke-[2.5]" />
+          </button>
+        </div>
 
         <button
           onClick={() => setActiveTab("transactions")}
-          className={`flex flex-col items-center gap-1 p-1 text-xs cursor-pointer ${
-            activeTab === "transactions" ? "text-[#0052cc] font-bold" : "text-slate-500"
+          className={`flex flex-col items-center justify-center flex-1 py-1 cursor-pointer transition-colors ${
+            activeTab === "transactions" ? "text-[#0052cc] font-bold" : "text-slate-500 hover:text-slate-800"
           }`}
         >
           <ArrowLeftRight className="w-5 h-5" />
-          <span className="text-[10px]">Mutasi</span>
+          <span className="text-[11px] mt-0.5">Mutasi</span>
         </button>
 
         <button
           onClick={() => setActiveTab("wallets")}
-          className={`flex flex-col items-center gap-1 p-1 text-xs cursor-pointer ${
-            activeTab === "wallets" ? "text-[#0052cc] font-bold" : "text-slate-500"
+          className={`flex flex-col items-center justify-center flex-1 py-1 cursor-pointer transition-colors ${
+            activeTab === "wallets" ? "text-[#0052cc] font-bold" : "text-slate-500 hover:text-slate-800"
           }`}
         >
           <Wallet className="w-5 h-5" />
-          <span className="text-[10px]">Rekening</span>
+          <span className="text-[11px] mt-0.5">Rekening</span>
         </button>
       </div>
     </>
