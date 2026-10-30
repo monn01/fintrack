@@ -12,7 +12,9 @@ import {
   AlertCircle,
   FileText,
   DollarSign,
-  Tag
+  Tag,
+  Pencil,
+  Trash2
 } from "lucide-react";
 import { formatRupiah, formatDateIndo } from "@/lib/utils";
 
@@ -29,6 +31,7 @@ export interface CalendarPlanItem {
 interface FinancialCalendarProps {
   plans: CalendarPlanItem[];
   onAddPlan: (plan: CalendarPlanItem) => void;
+  onEditPlan?: (plan: CalendarPlanItem) => void;
   onTogglePaid: (planId: string) => void;
   onDeletePlan: (planId: string) => void;
 }
@@ -36,6 +39,7 @@ interface FinancialCalendarProps {
 export default function FinancialCalendar({
   plans,
   onAddPlan,
+  onEditPlan,
   onTogglePaid,
   onDeletePlan,
 }: FinancialCalendarProps) {
@@ -44,6 +48,7 @@ export default function FinancialCalendar({
     new Date().toISOString().split("T")[0]
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingPlan, setEditingPlan] = useState<CalendarPlanItem | null>(null);
 
   // Form State
   const [title, setTitle] = useState("");
@@ -93,16 +98,28 @@ export default function FinancialCalendar({
 
     const num = parseFloat(amount.replace(/\./g, "").replace(/,/g, "")) || 0;
 
-    onAddPlan({
-      id: "plan-" + Date.now(),
-      date: selectedDate,
-      title: title.trim(),
-      estimatedAmount: num,
-      isMandatory,
-      isPaid: false,
-      notes: notes.trim() || undefined,
-    });
+    if (editingPlan && onEditPlan) {
+      onEditPlan({
+        ...editingPlan,
+        date: selectedDate,
+        title: title.trim(),
+        estimatedAmount: num,
+        isMandatory,
+        notes: notes.trim() || undefined,
+      });
+    } else {
+      onAddPlan({
+        id: "plan-" + Date.now(),
+        date: selectedDate,
+        title: title.trim(),
+        estimatedAmount: num,
+        isMandatory,
+        isPaid: false,
+        notes: notes.trim() || undefined,
+      });
+    }
 
+    setEditingPlan(null);
     setTitle("");
     setAmount("");
     setIsMandatory(false);
@@ -288,7 +305,14 @@ export default function FinancialCalendar({
               </div>
 
               <button
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => {
+                  setEditingPlan(null);
+                  setTitle("");
+                  setAmount("");
+                  setIsMandatory(false);
+                  setNotes("");
+                  setIsModalOpen(true);
+                }}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0052cc] hover:bg-[#0747a6] text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
               >
                 <Plus className="w-4 h-4 stroke-[2.5]" />
@@ -362,11 +386,27 @@ export default function FinancialCalendar({
                       </button>
 
                       <button
+                        onClick={() => {
+                          setEditingPlan(item);
+                          setSelectedDate(item.date);
+                          setTitle(item.title);
+                          setAmount(String(item.estimatedAmount));
+                          setIsMandatory(item.isMandatory);
+                          setNotes(item.notes || "");
+                          setIsModalOpen(true);
+                        }}
+                        title="Edit Agenda"
+                        className="p-2 rounded-xl hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors cursor-pointer icon-pop"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+
+                      <button
                         onClick={() => onDeletePlan(item.id)}
                         title="Hapus Agenda"
                         className="p-2 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors cursor-pointer icon-pop"
                       >
-                        <X className="w-4 h-4" />
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
@@ -390,7 +430,9 @@ export default function FinancialCalendar({
           <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
             <div className="p-4 border-b border-slate-100 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-bold text-slate-900">Tambah Agenda & Reminder</h3>
+                <h3 className="text-sm font-bold text-slate-900">
+                  {editingPlan ? "Edit Agenda & Reminder" : "Tambah Agenda & Reminder"}
+                </h3>
                 <p className="text-xs text-[#0052cc] font-medium">{formatDateIndo(selectedDate)}</p>
               </div>
               <button
@@ -470,7 +512,7 @@ export default function FinancialCalendar({
                 className="w-full py-2.5 px-4 rounded-xl bg-[#0052cc] hover:bg-[#0747a6] text-white font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm mt-2"
               >
                 <Check className="w-4 h-4" />
-                <span>Simpan ke Kalender Finansial</span>
+                <span>{editingPlan ? "Simpan Perubahan" : "Simpan ke Kalender Finansial"}</span>
               </button>
             </form>
           </div>

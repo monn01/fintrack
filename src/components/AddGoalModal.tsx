@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Check, Users } from "lucide-react";
 import { SavingsGoalItem } from "./SavingsGoalsList";
 
@@ -8,18 +8,38 @@ interface AddGoalModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddGoal: (goal: SavingsGoalItem) => void;
+  goalToEdit?: SavingsGoalItem | null;
+  onEditGoal?: (goal: SavingsGoalItem) => void;
 }
 
 export default function AddGoalModal({
   isOpen,
   onClose,
   onAddGoal,
+  goalToEdit,
+  onEditGoal,
 }: AddGoalModalProps) {
   const [title, setTitle] = useState("");
   const [targetAmount, setTargetAmount] = useState("");
   const [initialAmount, setInitialAmount] = useState("");
   const [targetDate, setTargetDate] = useState("");
   const [isShared, setIsShared] = useState(false);
+
+  useEffect(() => {
+    if (goalToEdit) {
+      setTitle(goalToEdit.title || "");
+      setTargetAmount(goalToEdit.targetAmount !== undefined ? String(goalToEdit.targetAmount) : "");
+      setInitialAmount(goalToEdit.currentAmount !== undefined ? String(goalToEdit.currentAmount) : "");
+      setTargetDate(goalToEdit.targetDate ? goalToEdit.targetDate.split("T")[0] : "");
+      setIsShared(!!goalToEdit.isShared);
+    } else {
+      setTitle("");
+      setTargetAmount("");
+      setInitialAmount("");
+      setTargetDate("");
+      setIsShared(false);
+    }
+  }, [goalToEdit, isOpen]);
 
   if (!isOpen) return null;
 
@@ -32,14 +52,25 @@ export default function AddGoalModal({
 
     if (targetNum <= 0) return;
 
-    onAddGoal({
-      id: "g-" + Date.now(),
-      title: title.trim(),
-      targetAmount: targetNum,
-      currentAmount: initialNum,
-      targetDate: targetDate || undefined,
-      isShared,
-    });
+    if (goalToEdit && onEditGoal) {
+      onEditGoal({
+        ...goalToEdit,
+        title: title.trim(),
+        targetAmount: targetNum,
+        currentAmount: initialNum,
+        targetDate: targetDate || undefined,
+        isShared,
+      });
+    } else {
+      onAddGoal({
+        id: "g-" + Date.now(),
+        title: title.trim(),
+        targetAmount: targetNum,
+        currentAmount: initialNum,
+        targetDate: targetDate || undefined,
+        isShared,
+      });
+    }
 
     setTitle("");
     setTargetAmount("");
@@ -53,7 +84,9 @@ export default function AddGoalModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
       <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-          <h3 className="text-sm font-bold text-slate-900">Buat Target Tabungan Baru</h3>
+          <h3 className="text-sm font-bold text-slate-900">
+            {goalToEdit ? "Edit Target Tabungan" : "Buat Target Tabungan Baru"}
+          </h3>
           <button
             onClick={onClose}
             className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
@@ -147,7 +180,7 @@ export default function AddGoalModal({
             className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md shadow-blue-500/20 mt-2"
           >
             <Check className="w-4 h-4" />
-            <span>Simpan Target Tabungan</span>
+            <span>{goalToEdit ? "Simpan Perubahan" : "Simpan Target Tabungan"}</span>
           </button>
         </form>
       </div>

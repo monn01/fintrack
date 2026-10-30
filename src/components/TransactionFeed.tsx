@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ArrowUpRight, ArrowDownLeft, ArrowLeftRight, Search, FileText } from "lucide-react";
+import { ArrowUpRight, ArrowDownLeft, ArrowLeftRight, Search, FileText, Pencil, Trash2 } from "lucide-react";
 import { formatRupiah, formatDateIndo } from "@/lib/utils";
 
 export interface TransactionItem {
@@ -18,9 +18,15 @@ export interface TransactionItem {
 
 interface TransactionFeedProps {
   transactions: TransactionItem[];
+  onEditTransaction?: (tx: TransactionItem) => void;
+  onDeleteTransaction?: (txId: string) => void;
 }
 
-export default function TransactionFeed({ transactions }: TransactionFeedProps) {
+export default function TransactionFeed({
+  transactions,
+  onEditTransaction,
+  onDeleteTransaction,
+}: TransactionFeedProps) {
   const [filterType, setFilterType] = useState<string>("ALL");
   const [search, setSearch] = useState("");
 
@@ -134,25 +140,58 @@ export default function TransactionFeed({ transactions }: TransactionFeedProps) 
                   </div>
                 </div>
 
-                <div className="text-right">
-                  <p
-                    className={`text-base font-extrabold font-numeric tracking-tight ${
-                      isIncome
-                        ? "text-emerald-600"
-                        : isExpense
-                        ? "text-rose-600"
-                        : "text-[#0052cc]"
-                    }`}
-                  >
-                    {isIncome ? `+${formatRupiah(t.amount)}` : isExpense ? `-${formatRupiah(t.amount)}` : formatRupiah(t.amount)}
-                  </p>
-                  {t.tags && t.tags.length > 0 && (
-                    <div className="flex items-center justify-end gap-1 mt-1">
-                      {t.tags.map((tag) => (
-                        <span key={tag} className="text-[10px] px-2 py-0.5 bg-slate-100 text-slate-600 rounded font-medium">
-                          {tag}
-                        </span>
-                      ))}
+                <div className="flex items-center gap-3">
+                  <div className="text-right">
+                    <p
+                      className={`text-base font-extrabold font-numeric tracking-tight ${
+                        isIncome
+                          ? "text-emerald-600"
+                          : isExpense
+                          ? "text-rose-600"
+                          : "text-[#0052cc]"
+                      }`}
+                    >
+                      {isIncome ? `+${formatRupiah(t.amount)}` : isExpense ? `-${formatRupiah(t.amount)}` : formatRupiah(t.amount)}
+                    </p>
+                    {t.tags && t.tags.length > 0 && (
+                      <div className="flex items-center justify-end gap-1 mt-1">
+                        {t.tags.map((tag) => (
+                          <span key={tag} className="text-[10px] px-2 py-0.5 bg-slate-100 text-slate-600 rounded font-medium">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {(onEditTransaction || onDeleteTransaction) && (
+                    <div className="flex items-center gap-1 opacity-80 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                      {onEditTransaction && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onEditTransaction(t);
+                          }}
+                          title="Edit Transaksi"
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                      )}
+                      {onDeleteTransaction && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDeleteTransaction(t.id);
+                          }}
+                          title="Hapus Transaksi"
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>

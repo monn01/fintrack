@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Building2, Smartphone, Banknote, ShieldCheck, Check, Users } from "lucide-react";
 import { WalletItem } from "./WalletList";
 
@@ -8,18 +8,38 @@ interface AddWalletModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddWallet: (wallet: WalletItem) => void;
+  walletToEdit?: WalletItem | null;
+  onEditWallet?: (wallet: WalletItem) => void;
 }
 
 export default function AddWalletModal({
   isOpen,
   onClose,
   onAddWallet,
+  walletToEdit,
+  onEditWallet,
 }: AddWalletModalProps) {
   const [name, setName] = useState("");
   const [type, setType] = useState<"BANK" | "EWALLET" | "CASH" | "INVESTMENT">("BANK");
   const [balance, setBalance] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
   const [isShared, setIsShared] = useState(false);
+
+  useEffect(() => {
+    if (walletToEdit) {
+      setName(walletToEdit.name || "");
+      setType(walletToEdit.type || "BANK");
+      setBalance(walletToEdit.balance !== undefined ? String(walletToEdit.balance) : "");
+      setAccountNumber(walletToEdit.accountNumber || "");
+      setIsShared(!!walletToEdit.isShared);
+    } else {
+      setName("");
+      setType("BANK");
+      setBalance("");
+      setAccountNumber("");
+      setIsShared(false);
+    }
+  }, [walletToEdit, isOpen]);
 
   if (!isOpen) return null;
 
@@ -29,14 +49,25 @@ export default function AddWalletModal({
 
     const initialBal = parseFloat(balance.replace(/\./g, "").replace(/,/g, "")) || 0;
 
-    onAddWallet({
-      id: "w-" + Date.now(),
-      name: name.trim(),
-      type,
-      balance: initialBal,
-      isShared,
-      accountNumber: accountNumber.trim() || undefined,
-    });
+    if (walletToEdit && onEditWallet) {
+      onEditWallet({
+        ...walletToEdit,
+        name: name.trim(),
+        type,
+        balance: initialBal,
+        isShared,
+        accountNumber: accountNumber.trim() || undefined,
+      });
+    } else {
+      onAddWallet({
+        id: "w-" + Date.now(),
+        name: name.trim(),
+        type,
+        balance: initialBal,
+        isShared,
+        accountNumber: accountNumber.trim() || undefined,
+      });
+    }
 
     setName("");
     setBalance("");
@@ -49,7 +80,9 @@ export default function AddWalletModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
       <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-          <h3 className="text-sm font-bold text-slate-900">Tambah Dompet / Akun Baru</h3>
+          <h3 className="text-sm font-bold text-slate-900">
+            {walletToEdit ? "Edit Rekening / Dompet" : "Tambah Dompet / Akun Baru"}
+          </h3>
           <button
             onClick={onClose}
             className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
@@ -163,7 +196,7 @@ export default function AddWalletModal({
             className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md shadow-blue-500/20 mt-2"
           >
             <Check className="w-4 h-4" />
-            <span>Simpan Dompet</span>
+            <span>{walletToEdit ? "Simpan Perubahan" : "Simpan Dompet"}</span>
           </button>
         </form>
       </div>

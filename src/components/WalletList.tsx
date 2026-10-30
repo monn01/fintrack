@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Building2, Smartphone, Banknote, ShieldCheck, Plus, Users, CreditCard } from "lucide-react";
+import { Building2, Smartphone, Banknote, ShieldCheck, Plus, Users, CreditCard, Pencil, Trash2 } from "lucide-react";
 import { formatRupiah } from "@/lib/utils";
 
 export interface WalletItem {
@@ -16,9 +16,16 @@ export interface WalletItem {
 interface WalletListProps {
   wallets: WalletItem[];
   onAddWallet?: () => void;
+  onEditWallet?: (wallet: WalletItem) => void;
+  onDeleteWallet?: (walletId: string) => void;
 }
 
-export default function WalletList({ wallets, onAddWallet }: WalletListProps) {
+export default function WalletList({
+  wallets,
+  onAddWallet,
+  onEditWallet,
+  onDeleteWallet,
+}: WalletListProps) {
   const getWalletBadge = (type: string) => {
     switch (type) {
       case "BANK":
@@ -105,11 +112,41 @@ export default function WalletList({ wallets, onAddWallet }: WalletListProps) {
                   )}
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-100">
-                  <p className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Saldo</p>
-                  <p className="text-xl font-extrabold text-slate-900 font-numeric tracking-tight mt-0.5">
-                    {formatRupiah(wallet.balance)}
-                  </p>
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                  <div>
+                    <p className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Saldo</p>
+                    <p className="text-xl font-extrabold text-slate-900 font-numeric tracking-tight mt-0.5">
+                      {formatRupiah(wallet.balance)}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {onEditWallet && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onEditWallet(wallet);
+                        }}
+                        title="Edit Rekening"
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-[#0052cc] hover:bg-blue-50 transition-colors cursor-pointer"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                    )}
+                    {onDeleteWallet && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDeleteWallet(wallet.id);
+                        }}
+                        title="Hapus Rekening"
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             );

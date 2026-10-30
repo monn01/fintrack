@@ -14,6 +14,7 @@ import AddWalletModal from "@/components/AddWalletModal";
 import AddGoalModal from "@/components/AddGoalModal";
 import DepositGoalModal from "@/components/DepositGoalModal";
 import FinancePromoBanners from "@/components/FinancePromoBanners";
+import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
 import { Plus, LogOut, ArrowLeftRight, CreditCard, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -22,11 +23,21 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<string>("dashboard");
   const [currentUser, setCurrentUser] = useState<{ name: string; role: string; user: string } | null>(null);
 
-  // Modals
+  // Modals & Editing States
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);
   const [isAddGoalOpen, setIsAddGoalOpen] = useState(false);
   const [depositingGoal, setDepositingGoal] = useState<SavingsGoalItem | null>(null);
+
+  const [editingWallet, setEditingWallet] = useState<WalletItem | null>(null);
+  const [editingGoal, setEditingGoal] = useState<SavingsGoalItem | null>(null);
+  const [editingTransaction, setEditingTransaction] = useState<TransactionItem | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{
+    type: "WALLET" | "GOAL" | "TRANSACTION";
+    id: string;
+    title: string;
+    description: string;
+  } | null>(null);
 
   // Real Data States
   const [wallets, setWallets] = useState<WalletItem[]>([]);
@@ -214,6 +225,170 @@ export default function Home() {
     }
   };
 
+  // Handle Edit Wallet
+  const handleEditWallet = async (updatedWallet: WalletItem) => {
+    setWallets((prev) => prev.map((w) => (w.id === updatedWallet.id ? updatedWallet : w)));
+
+    try {
+      await fetch("/api/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "UPDATE_WALLET", payload: updatedWallet }),
+      });
+    } catch (err) {
+      console.error("Failed to update wallet:", err);
+    }
+  };
+
+  // Handle Delete Wallet
+  const handleDeleteWallet = (walletId: string) => {
+    const target = wallets.find((w) => w.id === walletId);
+    setDeleteConfirm({
+      type: "WALLET",
+      id: walletId,
+      title: `Hapus Rekening "${target?.name || "Dompet"}"?`,
+      description: "Rekening ini beserta seluruh transaksi terkait akan dihapus secara permanen.",
+    });
+  };
+
+  // Handle Edit Goal
+  const handleEditGoal = async (updatedGoal: SavingsGoalItem) => {
+    setGoals((prev) => prev.map((g) => (g.id === updatedGoal.id ? updatedGoal : g)));
+
+    try {
+      await fetch("/api/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "UPDATE_GOAL", payload: updatedGoal }),
+      });
+    } catch (err) {
+      console.error("Failed to update goal:", err);
+    }
+  };
+
+  // Handle Delete Goal
+  const handleDeleteGoal = (goalId: string) => {
+    const target = goals.find((g) => g.id === goalId);
+    setDeleteConfirm({
+      type: "GOAL",
+      id: goalId,
+      title: `Hapus Target "${target?.title || "Tabungan"}"?`,
+      description: "Target tabungan ini akan dihapus dari daftar impian Anda.",
+    });
+  };
+
+  // Handle Edit Transaction
+  const handleEditTransaction = async (updatedTx: TransactionItem) => {
+    const oldTx = transactions.find((t) => t.id === updatedTx.id);
+
+    // Revert old impact and apply new impact on wallets
+    if (oldTx) {
+      setWallets((prev) =>
+        prev.map((w) => {
+          let bal = w.balance;
+          // Revert old
+          if (oldTx.type === "INCOME" && w.name === oldTx.wallet) bal -= oldTx.amount;
+          if (oldTx.type === "EXPENSE" && w.name === oldTx.wallet) bal += oldTx.amount;
+          if (oldTx.type === "TRANSFER") {
+            if (w.name === oldTx.wallet) bal += oldTx.amount;
+            if (w.name === oldTx.destinationWallet) bal -= oldTx.amount;
+          }
+
+          // Apply new
+          if (updatedTx.type === "INCOME" && w.name === updatedTx.wallet) bal += updatedTx.amount;
+          if (updatedTx.type === "EXPENSE" && w.name === updatedTx.wallet) bal -= updatedTx.amount;
+          if (updatedTx.type === "TRANSFER") {
+            if (w.name === updatedTx.wallet) bal -= updatedTx.amount;
+            if (w.name === updatedTx.destinationWallet) bal += updatedTx.amount;
+          }
+
+          return { ...w, balance: Math.max(0, bal) };
+        })
+      );
+    }
+
+    setTransactions((prev) => prev.map((t) => (t.id === updatedTx.id ? updatedTx : t)));
+
+    try {
+      await fetch("/api/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "UPDATE_TRANSACTION", payload: updatedTx }),
+      });
+    } catch (err) {
+      console.error("Failed to update transaction:", err);
+    }
+  };
+
+  // Handle Delete Transaction
+  const handleDeleteTransaction = (txId: string) => {
+    const target = transactions.find((t) => t.id === txId);
+    setDeleteConfirm({
+      type: "TRANSACTION",
+      id: txId,
+      title: "Hapus Riwayat Transaksi?",
+      description: `Transaksi "${target?.description || "Mutasi"}" akan dihapus dan saldo dompet akan dikembalikan ke posisi semula.`,
+    });
+  };
+
+  // Execute confirmed deletion
+  const handleExecuteDelete = async () => {
+    if (!deleteConfirm) return;
+    const { type, id } = deleteConfirm;
+
+    if (type === "WALLET") {
+      setWallets((prev) => prev.filter((w) => w.id !== id));
+      try {
+        await fetch("/api/data", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "DELETE_WALLET", payload: { id } }),
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    } else if (type === "GOAL") {
+      setGoals((prev) => prev.filter((g) => g.id !== id));
+      try {
+        await fetch("/api/data", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "DELETE_GOAL", payload: { id } }),
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    } else if (type === "TRANSACTION") {
+      const target = transactions.find((t) => t.id === id);
+      if (target) {
+        // Revert wallet balance
+        setWallets((prev) =>
+          prev.map((w) => {
+            let bal = w.balance;
+            if (target.type === "INCOME" && w.name === target.wallet) bal -= target.amount;
+            if (target.type === "EXPENSE" && w.name === target.wallet) bal += target.amount;
+            if (target.type === "TRANSFER") {
+              if (w.name === target.wallet) bal += target.amount;
+              if (w.name === target.destinationWallet) bal -= target.amount;
+            }
+            return { ...w, balance: Math.max(0, bal) };
+          })
+        );
+      }
+      setTransactions((prev) => prev.filter((t) => t.id !== id));
+      try {
+        await fetch("/api/data", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "DELETE_TRANSACTION", payload: { id } }),
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    setDeleteConfirm(null);
+  };
+
   // Metrics
   const totalNetWorth = wallets.reduce((acc, curr) => acc + curr.balance, 0);
 
@@ -343,6 +518,8 @@ export default function Home() {
               <WalletList
                 wallets={wallets}
                 onAddWallet={() => setIsAddWalletOpen(true)}
+                onEditWallet={(wallet) => setEditingWallet(wallet)}
+                onDeleteWallet={handleDeleteWallet}
               />
 
               {/* 5. GOALS */}
@@ -353,10 +530,16 @@ export default function Home() {
                   const g = goals.find((item) => item.id === goalId);
                   if (g) setDepositingGoal(g);
                 }}
+                onEditGoal={(goal) => setEditingGoal(goal)}
+                onDeleteGoal={handleDeleteGoal}
               />
 
               {/* 6. TRANSACTIONS */}
-              <TransactionFeed transactions={transactions} />
+              <TransactionFeed
+                transactions={transactions}
+                onEditTransaction={(tx) => setEditingTransaction(tx)}
+                onDeleteTransaction={handleDeleteTransaction}
+              />
             </>
           )}
 
@@ -365,6 +548,11 @@ export default function Home() {
               <FinancialCalendar
                 plans={calendarPlans}
                 onAddPlan={(newPlan) => setCalendarPlans((prev) => [...prev, newPlan])}
+                onEditPlan={(updatedPlan) =>
+                  setCalendarPlans((prev) =>
+                    prev.map((p) => (p.id === updatedPlan.id ? updatedPlan : p))
+                  )
+                }
                 onTogglePaid={(planId) =>
                   setCalendarPlans((prev) =>
                     prev.map((p) => (p.id === planId ? { ...p, isPaid: !p.isPaid } : p))
@@ -379,7 +567,11 @@ export default function Home() {
 
           {activeTab === "transactions" && (
             <div className="space-y-4">
-              <TransactionFeed transactions={transactions} />
+              <TransactionFeed
+                transactions={transactions}
+                onEditTransaction={(tx) => setEditingTransaction(tx)}
+                onDeleteTransaction={handleDeleteTransaction}
+              />
             </div>
           )}
 
@@ -388,6 +580,8 @@ export default function Home() {
               <WalletList
                 wallets={wallets}
                 onAddWallet={() => setIsAddWalletOpen(true)}
+                onEditWallet={(wallet) => setEditingWallet(wallet)}
+                onDeleteWallet={handleDeleteWallet}
               />
             </div>
           )}
@@ -401,6 +595,8 @@ export default function Home() {
                   const g = goals.find((item) => item.id === goalId);
                   if (g) setDepositingGoal(g);
                 }}
+                onEditGoal={(goal) => setEditingGoal(goal)}
+                onDeleteGoal={handleDeleteGoal}
               />
             </div>
           )}
@@ -418,22 +614,37 @@ export default function Home() {
 
       {/* MODALS */}
       <QuickAddModal
-        isOpen={isQuickAddOpen}
-        onClose={() => setIsQuickAddOpen(false)}
+        isOpen={isQuickAddOpen || !!editingTransaction}
+        onClose={() => {
+          setIsQuickAddOpen(false);
+          setEditingTransaction(null);
+        }}
         wallets={wallets}
         onAddTransaction={handleAddTransaction}
+        transactionToEdit={editingTransaction}
+        onEditTransaction={handleEditTransaction}
       />
 
       <AddWalletModal
-        isOpen={isAddWalletOpen}
-        onClose={() => setIsAddWalletOpen(false)}
+        isOpen={isAddWalletOpen || !!editingWallet}
+        onClose={() => {
+          setIsAddWalletOpen(false);
+          setEditingWallet(null);
+        }}
         onAddWallet={handleAddWallet}
+        walletToEdit={editingWallet}
+        onEditWallet={handleEditWallet}
       />
 
       <AddGoalModal
-        isOpen={isAddGoalOpen}
-        onClose={() => setIsAddGoalOpen(false)}
+        isOpen={isAddGoalOpen || !!editingGoal}
+        onClose={() => {
+          setIsAddGoalOpen(false);
+          setEditingGoal(null);
+        }}
         onAddGoal={handleAddGoal}
+        goalToEdit={editingGoal}
+        onEditGoal={handleEditGoal}
       />
 
       <DepositGoalModal
@@ -442,6 +653,14 @@ export default function Home() {
         goal={depositingGoal}
         wallets={wallets}
         onDeposit={handleDepositGoal}
+      />
+
+      <ConfirmDeleteModal
+        isOpen={!!deleteConfirm}
+        onClose={() => setDeleteConfirm(null)}
+        onConfirm={handleExecuteDelete}
+        title={deleteConfirm?.title || "Konfirmasi Hapus"}
+        description={deleteConfirm?.description || "Tindakan ini tidak dapat dibatalkan."}
       />
     </div>
   );

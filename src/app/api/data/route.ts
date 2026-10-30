@@ -250,6 +250,213 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, item: createdTx });
     }
 
+    if (action === "UPDATE_WALLET") {
+      const existing = await prisma.wallet.findFirst({
+        where: { id: payload.id },
+      });
+      if (existing) {
+        const updated = await prisma.wallet.update({
+          where: { id: existing.id },
+          data: {
+            name: payload.name,
+            type: payload.type || existing.type,
+            balance: payload.balance !== undefined ? payload.balance : existing.balance,
+            isShared: payload.isShared !== undefined ? payload.isShared : existing.isShared,
+            accountNumber: payload.accountNumber,
+          },
+        });
+        return NextResponse.json({ success: true, item: updated });
+      }
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === "DELETE_WALLET") {
+      const existing = await prisma.wallet.findFirst({
+        where: { id: payload.id },
+      });
+      if (existing) {
+        await prisma.wallet.delete({
+          where: { id: existing.id },
+        });
+      }
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === "UPDATE_GOAL") {
+      const existing = await prisma.savingsGoal.findFirst({
+        where: { id: payload.id },
+      });
+      if (existing) {
+        const updated = await prisma.savingsGoal.update({
+          where: { id: existing.id },
+          data: {
+            title: payload.title,
+            targetAmount: payload.targetAmount,
+            currentAmount: payload.currentAmount !== undefined ? payload.currentAmount : existing.currentAmount,
+            targetDate: payload.targetDate ? new Date(payload.targetDate) : null,
+            isShared: payload.isShared !== undefined ? payload.isShared : existing.isShared,
+          },
+        });
+        return NextResponse.json({ success: true, item: updated });
+      }
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === "DELETE_GOAL") {
+      const existing = await prisma.savingsGoal.findFirst({
+        where: { id: payload.id },
+      });
+      if (existing) {
+        await prisma.savingsGoal.delete({
+          where: { id: existing.id },
+        });
+      }
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === "DELETE_TRANSACTION") {
+      const existing = await prisma.transaction.findFirst({
+        where: { id: payload.id },
+        include: { wallet: true, destinationWallet: true },
+      });
+      if (existing) {
+        const amountNum = Number(existing.amount);
+        // Revert balance on wallet
+        if (existing.type === "INCOME") {
+          await prisma.wallet.update({
+            where: { id: existing.walletId },
+            data: { balance: { decrement: amountNum } },
+          });
+        } else if (existing.type === "EXPENSE") {
+          await prisma.wallet.update({
+            where: { id: existing.walletId },
+            data: { balance: { increment: amountNum } },
+          });
+        } else if (existing.type === "TRANSFER") {
+          await prisma.wallet.update({
+            where: { id: existing.walletId },
+            data: { balance: { increment: amountNum } },
+          });
+          if (existing.destinationWalletId) {
+            await prisma.wallet.update({
+              where: { id: existing.destinationWalletId },
+              data: { balance: { decrement: amountNum } },
+            });
+          }
+        }
+
+        await prisma.transaction.delete({
+          where: { id: existing.id },
+        });
+      }
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === "UPDATE_TRANSACTION") {
+      const existing = await prisma.transaction.findFirst({
+        where: { id: payload.id },
+        include: { wallet: true, destinationWallet: true },
+      });
+
+      if (existing) {
+        const oldAmount = Number(existing.amount);
+        // 1. Revert old transaction impact
+        if (existing.type === "INCOME") {
+          await prisma.wallet.update({
+            where: { id: existing.walletId },
+            data: { balance: { decrement: oldAmount } },
+          });
+        } else if (existing.type === "EXPENSE") {
+          await prisma.wallet.update({
+            where: { id: existing.walletId },
+            data: { balance: { increment: oldAmount } },
+          });
+        } else if (existing.type === "TRANSFER") {
+          await prisma.wallet.update({
+            where: { id: existing.walletId },
+            data: { balance: { increment: oldAmount } },
+          });
+          if (existing.destinationWalletId) {
+            await prisma.wallet.update({
+              where: { id: existing.destinationWalletId },
+              data: { balance: { decrement: oldAmount } },
+            });
+          }
+        }
+
+        // 2. Find new source wallet & dest wallet
+        let newSourceWallet = await prisma.wallet.findFirst({
+          where: { OR: [{ id: payload.walletId }, { name: payload.wallet }] },
+        });
+        if (!newSourceWallet) newSourceWallet = existing.wallet;
+
+        let newDestWallet = null;
+        if (payload.type === "TRANSFER" && payload.destinationWallet) {
+          newDestWallet = await prisma.wallet.findFirst({
+            where: { OR: [{ id: payload.destinationWalletId }, { name: payload.destinationWallet }] },
+          });
+        }
+
+        const newAmount = Number(payload.amount);
+
+        // 3. Apply new transaction impact
+        if (payload.type === "INCOME") {
+          await prisma.wallet.update({
+            where: { id: newSourceWallet.id },
+            data: { balance: { increment: newAmount } },
+          });
+        } else if (payload.type === "EXPENSE") {
+          await prisma.wallet.update({
+            where: { id: newSourceWallet.id },
+            data: { balance: { decrement: newAmount } },
+          });
+        } else if (payload.type === "TRANSFER") {
+          await prisma.wallet.update({
+            where: { id: newSourceWallet.id },
+            data: { balance: { decrement: newAmount } },
+          });
+          if (newDestWallet) {
+            await prisma.wallet.update({
+              where: { id: newDestWallet.id },
+              data: { balance: { increment: newAmount } },
+            });
+          }
+        }
+
+        // 4. Update Category
+        let category = null;
+        if (payload.category) {
+          category = await prisma.category.findFirst({
+            where: { name: payload.category },
+          });
+          if (!category) {
+            category = await prisma.category.create({
+              data: {
+                name: payload.category,
+                type: payload.type === "INCOME" ? "INCOME" : "EXPENSE",
+              },
+            });
+          }
+        }
+
+        const updatedTx = await prisma.transaction.update({
+          where: { id: existing.id },
+          data: {
+            type: payload.type || existing.type,
+            amount: newAmount,
+            date: payload.date ? new Date(payload.date) : existing.date,
+            description: payload.description,
+            walletId: newSourceWallet.id,
+            destinationWalletId: newDestWallet ? newDestWallet.id : null,
+            categoryId: category ? category.id : existing.categoryId,
+          },
+        });
+
+        return NextResponse.json({ success: true, item: updatedTx });
+      }
+      return NextResponse.json({ success: true });
+    }
+
     if (action === "DEPOSIT_GOAL") {
       const { goalId, walletId, amount } = payload;
       // Deduct from wallet

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { PiggyBank, Calendar, Plus, Users, CheckCircle2 } from "lucide-react";
+import { PiggyBank, Calendar, Plus, Users, CheckCircle2, Pencil, Trash2 } from "lucide-react";
 import { formatRupiah, formatDateIndo } from "@/lib/utils";
 
 export interface SavingsGoalItem {
@@ -17,9 +17,17 @@ interface SavingsGoalsListProps {
   goals: SavingsGoalItem[];
   onAddGoal?: () => void;
   onDepositGoal?: (goalId: string) => void;
+  onEditGoal?: (goal: SavingsGoalItem) => void;
+  onDeleteGoal?: (goalId: string) => void;
 }
 
-export default function SavingsGoalsList({ goals, onAddGoal, onDepositGoal }: SavingsGoalsListProps) {
+export default function SavingsGoalsList({
+  goals,
+  onAddGoal,
+  onDepositGoal,
+  onEditGoal,
+  onDeleteGoal,
+}: SavingsGoalsListProps) {
   return (
     <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm shadow-slate-200/40">
       <div className="flex items-center justify-between mb-4">
@@ -86,12 +94,40 @@ export default function SavingsGoalsList({ goals, onAddGoal, onDepositGoal }: Sa
                       </div>
                     </div>
 
-                    {goal.isShared && (
-                      <span className="flex items-center gap-1 text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 border border-blue-200">
-                        <Users className="w-2.5 h-2.5" />
-                        Bersama
-                      </span>
-                    )}
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {goal.isShared && (
+                        <span className="flex items-center gap-1 text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 border border-blue-200">
+                          <Users className="w-2.5 h-2.5" />
+                          Bersama
+                        </span>
+                      )}
+                      {onEditGoal && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onEditGoal(goal);
+                          }}
+                          title="Edit Target"
+                          className="p-1 rounded-md text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                      {onDeleteGoal && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDeleteGoal(goal.id);
+                          }}
+                          title="Hapus Target"
+                          className="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   {/* PROGRESS BAR */}

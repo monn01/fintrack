@@ -1,14 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Sparkles, ArrowRight, Check } from "lucide-react";
 import { WalletItem } from "./WalletList";
+import { TransactionItem } from "./TransactionFeed";
 
 interface QuickAddModalProps {
   isOpen: boolean;
   onClose: () => void;
   wallets: WalletItem[];
   onAddTransaction: (newTx: any) => void;
+  transactionToEdit?: TransactionItem | null;
+  onEditTransaction?: (updatedTx: TransactionItem) => void;
 }
 
 export default function QuickAddModal({
@@ -16,6 +19,8 @@ export default function QuickAddModal({
   onClose,
   wallets,
   onAddTransaction,
+  transactionToEdit,
+  onEditTransaction,
 }: QuickAddModalProps) {
   const [activeTab, setActiveTab] = useState<"ai" | "manual">("ai");
   const [aiPrompt, setAiPrompt] = useState("");
@@ -29,6 +34,33 @@ export default function QuickAddModal({
   const [category, setCategory] = useState<string>("Makan & Minum");
   const [description, setDescription] = useState<string>("");
   const [tagInput, setTagInput] = useState<string>("");
+
+  useEffect(() => {
+    if (transactionToEdit) {
+      setActiveTab("manual");
+      setType(transactionToEdit.type || "EXPENSE");
+      setAmount(transactionToEdit.amount !== undefined ? String(transactionToEdit.amount) : "");
+      setDescription(transactionToEdit.description || "");
+      setCategory(transactionToEdit.category || "Makan & Minum");
+      setTagInput((transactionToEdit.tags || []).join(", "));
+
+      const matchedSource = wallets.find((w) => w.name === transactionToEdit.wallet);
+      if (matchedSource) setWalletId(matchedSource.id);
+
+      const matchedDest = wallets.find((w) => w.name === transactionToEdit.destinationWallet);
+      if (matchedDest) setDestinationWalletId(matchedDest.id);
+    } else {
+      setActiveTab("ai");
+      setType("EXPENSE");
+      setAmount("");
+      setDescription("");
+      setCategory("Makan & Minum");
+      setTagInput("");
+      setAiPrompt("");
+      if (wallets.length > 0) setWalletId(wallets[0].id);
+      if (wallets.length > 1) setDestinationWalletId(wallets[1].id);
+    }
+  }, [transactionToEdit, isOpen, wallets]);
 
   if (!isOpen) return null;
 
@@ -95,17 +127,30 @@ export default function QuickAddModal({
       .map((t) => t.trim())
       .filter((t) => t.length > 0);
 
-    onAddTransaction({
-      id: "tx-" + Date.now(),
-      type,
-      amount: num,
-      category,
-      wallet: selectedWallet,
-      destinationWallet: type === "TRANSFER" ? selectedDest : undefined,
-      description: description || (type === "INCOME" ? "Pemasukan" : "Pengeluaran"),
-      date: new Date().toISOString(),
-      tags,
-    });
+    if (transactionToEdit && onEditTransaction) {
+      onEditTransaction({
+        ...transactionToEdit,
+        type,
+        amount: num,
+        category,
+        wallet: selectedWallet,
+        destinationWallet: type === "TRANSFER" ? selectedDest : undefined,
+        description: description || (type === "INCOME" ? "Pemasukan" : "Pengeluaran"),
+        tags,
+      });
+    } else {
+      onAddTransaction({
+        id: "tx-" + Date.now(),
+        type,
+        amount: num,
+        category,
+        wallet: selectedWallet,
+        destinationWallet: type === "TRANSFER" ? selectedDest : undefined,
+        description: description || (type === "INCOME" ? "Pemasukan" : "Pengeluaran"),
+        date: new Date().toISOString(),
+        tags,
+      });
+    }
 
     setAmount("");
     setDescription("");
@@ -120,9 +165,11 @@ export default function QuickAddModal({
         {/* HEADER */}
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-bold text-slate-900">Catat Transaksi</h3>
+            <h3 className="text-sm font-bold text-slate-900">
+              {transactionToEdit ? "Edit Transaksi" : "Catat Transaksi"}
+            </h3>
             <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700">
-              Baru
+              {transactionToEdit ? "Perbarui" : "Baru"}
             </span>
           </div>
           <button
@@ -341,7 +388,7 @@ export default function QuickAddModal({
                 className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md shadow-blue-500/20"
               >
                 <Check className="w-4 h-4" />
-                <span>Simpan Transaksi</span>
+                <span>{transactionToEdit ? "Simpan Perubahan" : "Simpan Transaksi"}</span>
               </button>
             </div>
           </form>
