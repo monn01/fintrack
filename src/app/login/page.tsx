@@ -155,7 +155,7 @@ export default function LoginPage() {
         {/* RIGHT COLUMN: LOGIN FORM */}
         <div className="lg:col-span-7 p-8 sm:p-12 flex flex-col justify-center bg-white">
           <div className="max-w-md mx-auto w-full">
-            <div className="mb-6">
+            <div className="mb-8">
               <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">
                 Area Privat
               </span>
@@ -163,52 +163,8 @@ export default function LoginPage() {
                 Masuk ke FinTrack
               </h3>
               <p className="text-xs text-slate-500 mt-1 font-medium">
-                Pilih profil Anda atau masukkan kredensial akun untuk melanjutkan.
+                Masukkan username dan kata sandi Anda untuk mengakses akun.
               </p>
-            </div>
-
-            {/* QUICK PROFILE PICKER */}
-            <div className="mb-5">
-              <span className="block text-xs font-semibold text-slate-700 mb-2">
-                Pilih Profil Akses:
-              </span>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => handleQuickSelect("monn")}
-                  className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
-                    username.toLowerCase() === "monn"
-                      ? "bg-blue-50/90 border-blue-600 ring-2 ring-blue-500/20 shadow-xs"
-                      : "bg-slate-50/80 border-slate-200 hover:border-slate-300 text-slate-600 hover:bg-slate-100"
-                  }`}
-                >
-                  <div className="w-8 h-8 rounded-xl bg-blue-600 text-white font-black flex items-center justify-center text-xs shrink-0 shadow-sm shadow-blue-500/30">
-                    M
-                  </div>
-                  <div className="truncate">
-                    <p className="font-bold text-slate-900 text-xs truncate">Monn</p>
-                    <p className="text-[10px] text-slate-500 font-medium">Pemilik Akun</p>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleQuickSelect("pasangan")}
-                  className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
-                    username.toLowerCase() === "pasangan" || username.toLowerCase() === "partner"
-                      ? "bg-rose-50/90 border-rose-500 ring-2 ring-rose-500/20 shadow-xs"
-                      : "bg-slate-50/80 border-slate-200 hover:border-slate-300 text-slate-600 hover:bg-slate-100"
-                  }`}
-                >
-                  <div className="w-8 h-8 rounded-xl bg-rose-500 text-white font-black flex items-center justify-center text-xs shrink-0 shadow-sm shadow-rose-500/30">
-                    <Heart className="w-4 h-4 fill-current" />
-                  </div>
-                  <div className="truncate">
-                    <p className="font-bold text-slate-900 text-xs truncate">Pasangan</p>
-                    <p className="text-[10px] text-slate-500 font-medium">Partner Akses</p>
-                  </div>
-                </button>
-              </div>
             </div>
 
             {/* FORM INPUTS */}
