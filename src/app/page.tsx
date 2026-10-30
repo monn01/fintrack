@@ -13,6 +13,7 @@ import QuickAddModal from "@/components/QuickAddModal";
 import AddWalletModal from "@/components/AddWalletModal";
 import AddGoalModal from "@/components/AddGoalModal";
 import DepositGoalModal from "@/components/DepositGoalModal";
+import FinancePromoBanners from "@/components/FinancePromoBanners";
 import { Plus, LogOut, ArrowLeftRight, CreditCard, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -313,7 +314,13 @@ export default function Home() {
                 onOpenAddGoal={() => setIsAddGoalOpen(true)}
               />
 
-              {/* 2. AI FINANCIAL ADVISOR WIDGET */}
+              {/* 2. PROMO & FINANCE INSIGHT BANNERS (myBCA / GOPAY ADS STYLE) */}
+              <FinancePromoBanners
+                onOpenAddGoal={() => setIsAddGoalOpen(true)}
+                monthlyExpense={monthlyExpense}
+              />
+
+              {/* 3. AI FINANCIAL ADVISOR WIDGET */}
               <AiAdvisorWidget
                 summary={{
                   totalBalance: totalNetWorth,
