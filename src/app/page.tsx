@@ -12,9 +12,11 @@ import QuickAddModal from "@/components/QuickAddModal";
 import AddWalletModal from "@/components/AddWalletModal";
 import AddGoalModal from "@/components/AddGoalModal";
 import DepositGoalModal from "@/components/DepositGoalModal";
-import { Plus, Heart, Sparkles, Building2, PiggyBank } from "lucide-react";
+import { Plus, Heart, Sparkles, Building2, PiggyBank, LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>("dashboard");
   const [currentUser, setCurrentUser] = useState<{ name: string; role: string; user: string } | null>(null);
 
@@ -278,6 +280,20 @@ export default function Home() {
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
               <span className="hidden sm:inline">Catat Transaksi</span>
+            </button>
+
+            {/* LOGOUT BUTTON IN HEADER */}
+            <button
+              onClick={async () => {
+                await fetch("/api/auth/logout", { method: "POST" });
+                router.push("/login");
+                router.refresh();
+              }}
+              title="Keluar dari akun"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-50 hover:bg-rose-50 border border-slate-200 text-slate-600 hover:text-rose-600 text-xs font-semibold transition-all cursor-pointer"
+            >
+              <LogOut className="w-4 h-4 text-slate-500 hover:text-rose-600" />
+              <span className="hidden sm:inline">Keluar</span>
             </button>
           </div>
         </header>
