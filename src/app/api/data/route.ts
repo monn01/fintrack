@@ -3,9 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 
 // Ensure default household & user exists
-async function getOrCreateUser(sessionUser: string) {
+async function getOrCreateUser(sessionUser: string, sessionName?: string) {
   const email = sessionUser === "partner" ? "partner@fintrack.app" : "monn@fintrack.app";
-  const name = sessionUser === "partner" ? "Pasangan" : "Monn";
+  const name = sessionName || (sessionUser === "partner" ? "Pasangan" : "Pengguna");
   const role = sessionUser === "partner" ? ("PARTNER" as const) : ("OWNER" as const);
 
   // Check or create primary household
@@ -13,7 +13,7 @@ async function getOrCreateUser(sessionUser: string) {
   if (!household) {
     household = await prisma.household.create({
       data: {
-        name: "Rumah Tangga Monn & Pasangan",
+        name: "Rumah Tangga Bersama",
         inviteCode: "FINTRACK",
       },
     });
@@ -32,6 +32,11 @@ async function getOrCreateUser(sessionUser: string) {
         householdId: household.id,
       },
     });
+  } else if (sessionName && user.name !== sessionName) {
+    user = await prisma.user.update({
+      where: { id: user.id },
+      data: { name: sessionName },
+    });
   }
 
   return { user, household };
@@ -43,8 +48,9 @@ export async function GET(req: NextRequest) {
     const token = req.cookies.get("fintrack_session")?.value;
     const session = token ? await verifyToken(token) : null;
     const sessionUser = session?.user || "monn";
+    const sessionName = session?.name;
 
-    const { user, household } = await getOrCreateUser(sessionUser);
+    const { user, household } = await getOrCreateUser(sessionUser, sessionName);
 
     // Get wallets (personal + shared)
     const wallets = await prisma.wallet.findMany({
@@ -127,8 +133,9 @@ export async function POST(req: NextRequest) {
     const token = req.cookies.get("fintrack_session")?.value;
     const session = token ? await verifyToken(token) : null;
     const sessionUser = session?.user || "monn";
+    const sessionName = session?.name;
 
-    const { user, household } = await getOrCreateUser(sessionUser);
+    const { user, household } = await getOrCreateUser(sessionUser, sessionName);
     const body = await req.json();
     const { action, payload } = body;
 

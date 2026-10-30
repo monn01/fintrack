@@ -112,11 +112,15 @@ export default function Navigation({
                   isPartner ? "bg-rose-500" : "bg-[#0052cc]"
                 }`}
               >
-                {isPartner ? <Heart className="w-4 h-4 fill-current" /> : "M"}
+                {isPartner ? (
+                  <Heart className="w-4 h-4 fill-current" />
+                ) : (
+                  currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : "U"
+                )}
               </div>
               <div className="overflow-hidden">
                 <p className="text-xs font-bold text-slate-900 truncate">
-                  {currentUser?.name || "Monn"}
+                  {currentUser?.name || "Pengguna"}
                 </p>
                 <p className="text-[10px] text-slate-500 font-medium truncate">
                   {isPartner ? "Partner Access" : "Pemilik Akun"}

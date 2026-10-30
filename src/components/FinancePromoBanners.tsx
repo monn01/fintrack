@@ -77,7 +77,7 @@ const PROMOS: PromoItem[] = [
     shortDesc: "Tabungan nikah, DP rumah idaman, hingga liburan impian berdua lebih transparan dan terpantau real-time.",
     imageSrc: "/banners/banner-couple.png",
     ctaText: "Set Target Bersama",
-    modalTitle: "Strategi Keuangan Harmonis Monn & Pasangan",
+    modalTitle: "Strategi Keuangan Harmonis Bersama Pasangan",
     modalDesc: "Kunci hubungan finansial yang sehat adalah transparansi. Gunakan fitur Dual User FinTrack untuk menyatukan visi masa depan.",
     keyPoints: [
       "Transparansi penuh pengeluaran bersama tanpa saling curiga",

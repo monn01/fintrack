@@ -303,7 +303,7 @@ export default function Home() {
             <>
               {/* 1. BANKING HERO DASHBOARD (myBCA / GOPAY STYLE) */}
               <BankingHero
-                userName={currentUser?.name || "Monn"}
+                userName={currentUser?.name || "Pengguna"}
                 isPartner={currentUser?.user === "partner"}
                 netWorth={totalNetWorth}
                 monthlyIncome={monthlyIncome}
