@@ -87,7 +87,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      wallets: wallets.map((w) => ({
+      wallets: wallets.map((w: any) => ({
         id: w.id,
         name: w.name,
         type: w.type,
@@ -95,22 +95,22 @@ export async function GET(req: NextRequest) {
         isShared: w.isShared,
         accountNumber: w.accountNumber || undefined,
       })),
-      goals: goals.map((g) => ({
+      goals: goals.map((g: any) => ({
         id: g.id,
         title: g.title,
         targetAmount: Number(g.targetAmount),
         currentAmount: Number(g.currentAmount),
-        targetDate: g.targetDate?.toISOString().split("T")[0],
+        targetDate: g.targetDate ? new Date(g.targetDate).toISOString().split("T")[0] : undefined,
         isShared: g.isShared,
       })),
-      transactions: transactions.map((t) => ({
+      transactions: transactions.map((t: any) => ({
         id: t.id,
         type: t.type,
         amount: Number(t.amount),
         category: t.category?.name || "Lain-lain",
-        wallet: t.wallet.name,
+        wallet: t.wallet?.name || "Dompet",
         destinationWallet: t.destinationWallet?.name,
-        date: t.date.toISOString().split("T")[0],
+        date: t.date ? new Date(t.date).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
         description: t.description || "",
         tags: t.tags || [],
       })),
