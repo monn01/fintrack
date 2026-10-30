@@ -6,19 +6,29 @@ import {
   ArrowLeftRight, 
   PiggyBank, 
   PieChart, 
-  Settings, 
   Plus, 
   Users,
-  Wallet
+  Wallet,
+  LogOut,
+  Heart
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface NavProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   onOpenQuickAdd: () => void;
+  currentUser?: { name: string; role: string; user: string } | null;
 }
 
-export default function Navigation({ activeTab, setActiveTab, onOpenQuickAdd }: NavProps) {
+export default function Navigation({
+  activeTab,
+  setActiveTab,
+  onOpenQuickAdd,
+  currentUser,
+}: NavProps) {
+  const router = useRouter();
+
   const navItems = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "transactions", label: "Transaksi", icon: ArrowLeftRight },
@@ -26,6 +36,18 @@ export default function Navigation({ activeTab, setActiveTab, onOpenQuickAdd }: 
     { id: "goals", label: "Target Tabungan", icon: PiggyBank },
     { id: "analytics", label: "Analitik", icon: PieChart },
   ];
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      router.push("/login");
+      router.refresh();
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
+
+  const isPartner = currentUser?.user === "partner";
 
   return (
     <>
@@ -80,22 +102,36 @@ export default function Navigation({ activeTab, setActiveTab, onOpenQuickAdd }: 
           </nav>
         </div>
 
-        {/* BOTTOM USER PROFILE / PARTNER STATUS */}
-        <div className="pt-4 border-t border-[#27272a]">
+        {/* BOTTOM USER PROFILE / LOGOUT */}
+        <div className="pt-4 border-t border-[#27272a] space-y-2">
           <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#121215] border border-[#27272a]">
             <div className="flex items-center gap-2.5 overflow-hidden">
-              <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-semibold text-zinc-200 shrink-0">
-                P
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 ${
+                  isPartner
+                    ? "bg-rose-500 text-white"
+                    : "bg-emerald-500 text-black"
+                }`}
+              >
+                {isPartner ? <Heart className="w-4 h-4 fill-current" /> : "M"}
               </div>
               <div className="overflow-hidden">
-                <p className="text-xs font-medium text-white truncate">Pasangan Mode</p>
-                <p className="text-[10px] text-emerald-400 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
-                  Terhubung
+                <p className="text-xs font-semibold text-white truncate">
+                  {currentUser?.name || "Monn"}
+                </p>
+                <p className="text-[10px] text-zinc-400 truncate">
+                  {isPartner ? "Partner Access" : "Pemilik Akun"}
                 </p>
               </div>
             </div>
-            <Users className="w-4 h-4 text-zinc-400" />
+
+            <button
+              onClick={handleLogout}
+              title="Keluar"
+              className="p-1.5 rounded-lg text-zinc-400 hover:text-rose-400 hover:bg-zinc-800 transition-colors cursor-pointer"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </aside>
@@ -142,13 +178,13 @@ export default function Navigation({ activeTab, setActiveTab, onOpenQuickAdd }: 
         </button>
 
         <button
-          onClick={() => setActiveTab("analytics")}
+          onClick={() => setActiveTab("wallets")}
           className={`flex flex-col items-center gap-1 p-1 text-xs cursor-pointer ${
-            activeTab === "analytics" ? "text-emerald-400" : "text-zinc-400"
+            activeTab === "wallets" ? "text-emerald-400" : "text-zinc-400"
           }`}
         >
-          <PieChart className="w-5 h-5" />
-          <span className="text-[10px]">Analitik</span>
+          <Wallet className="w-5 h-5" />
+          <span className="text-[10px]">Dompet</span>
         </button>
       </div>
     </>

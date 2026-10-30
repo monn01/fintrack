@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import MetricCards from "@/components/MetricCards";
 import AiAdvisorWidget from "@/components/AiAdvisorWidget";
@@ -9,63 +9,72 @@ import WalletList, { WalletItem } from "@/components/WalletList";
 import SavingsGoalsList, { SavingsGoalItem } from "@/components/SavingsGoalsList";
 import TransactionFeed, { TransactionItem } from "@/components/TransactionFeed";
 import QuickAddModal from "@/components/QuickAddModal";
-import { Plus, Bell, ShieldCheck, Heart } from "lucide-react";
+import AddWalletModal from "@/components/AddWalletModal";
+import AddGoalModal from "@/components/AddGoalModal";
+import DepositGoalModal from "@/components/DepositGoalModal";
+import { Plus, Heart, Sparkles, Building2, PiggyBank } from "lucide-react";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<string>("dashboard");
+  const [currentUser, setCurrentUser] = useState<{ name: string; role: string; user: string } | null>(null);
+
+  // Modals
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
+  const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);
+  const [isAddGoalOpen, setIsAddGoalOpen] = useState(false);
+  const [depositingGoal, setDepositingGoal] = useState<SavingsGoalItem | null>(null);
 
-  // Initial State: Wallets
-  const [wallets, setWallets] = useState<WalletItem[]>([
-    { id: "w-1", name: "BCA Utama", type: "BANK", balance: 14250000, isShared: false, accountNumber: "8271-9920-11" },
-    { id: "w-2", name: "GoPay", type: "EWALLET", balance: 850000, isShared: false, accountNumber: "0812-3456-7890" },
-    { id: "w-3", name: "Rekening Bersama", type: "BANK", balance: 8500000, isShared: true, accountNumber: "5420-1189-99" },
-    { id: "w-4", name: "Dompet Tunai", type: "CASH", balance: 450000, isShared: false },
-  ]);
+  // Fresh Real Data States (Initialized empty)
+  const [wallets, setWallets] = useState<WalletItem[]>([]);
+  const [goals, setGoals] = useState<SavingsGoalItem[]>([]);
+  const [transactions, setTransactions] = useState<TransactionItem[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  // Initial State: Savings Goals
-  const [goals, setGoals] = useState<SavingsGoalItem[]>([
-    { id: "g-1", title: "Dana Darurat (6 Bulan)", targetAmount: 30000000, currentAmount: 18500000, targetDate: "2026-12-31", isShared: false },
-    { id: "g-2", title: "Liburan Bersama Pasangan", targetAmount: 10000000, currentAmount: 6200000, targetDate: "2026-11-20", isShared: true },
-    { id: "g-3", title: "Upgrade Laptop Kerja", targetAmount: 15000000, currentAmount: 7500000, targetDate: "2027-02-15", isShared: false },
-  ]);
+  const [currentMonthName, setCurrentMonthName] = useState("Periode Berjalan");
 
-  // Initial State: Transactions
-  const [transactions, setTransactions] = useState<TransactionItem[]>([
-    { id: "tx-1", type: "EXPENSE", amount: 45000, category: "Makan & Minum", wallet: "GoPay", date: "2026-10-29", description: "Makan Siang Soto Betawi", tags: ["#makan", "#kantor"] },
-    { id: "tx-2", type: "EXPENSE", amount: 125000, category: "Transportasi", wallet: "GoPay", date: "2026-10-28", description: "Bensin & Tol Mobil", tags: ["#transport"] },
-    { id: "tx-3", type: "INCOME", amount: 12500000, category: "Gaji / Penghasilan", wallet: "BCA Utama", date: "2026-10-25", description: "Gaji Bulanan Oktober", tags: ["#gaji"] },
-    { id: "tx-4", type: "EXPENSE", amount: 650000, category: "Belanja", wallet: "Rekening Bersama", date: "2026-10-24", description: "Belanja Bulanan Supermarket", tags: ["#kebutuhan-rumah"] },
-    { id: "tx-5", type: "TRANSFER", amount: 1500000, category: "Transfer", wallet: "BCA Utama", destinationWallet: "Rekening Bersama", date: "2026-10-23", description: "Top-up Kas Bersama Bulanan", tags: ["#kas-rumah"] },
-  ]);
+  // Fetch current authenticated user & month
+  useEffect(() => {
+    setCurrentMonthName(new Intl.DateTimeFormat("id-ID", { month: "long", year: "numeric" }).format(new Date()));
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          setCurrentUser(data.user);
+        }
+      })
+      .catch((err) => console.error(err));
+  }, []);
 
-  // Cash Flow History for Chart
-  const cashFlowData = [
-    { month: "Mei", pemasukan: 11000000, pengeluaran: 6200000 },
-    { month: "Jun", pemasukan: 11500000, pengeluaran: 7100000 },
-    { month: "Jul", pemasukan: 12000000, pengeluaran: 6800000 },
-    { month: "Agu", pemasukan: 11000000, pengeluaran: 8400000 },
-    { month: "Sep", pemasukan: 13000000, pengeluaran: 7500000 },
-    { month: "Okt", pemasukan: 12500000, pengeluaran: 6200000 },
-  ];
+  // Load from LocalStorage for instant real persistence
+  useEffect(() => {
+    try {
+      const savedWallets = localStorage.getItem("fintrack_wallets");
+      const savedGoals = localStorage.getItem("fintrack_goals");
+      const savedTx = localStorage.getItem("fintrack_transactions");
 
-  // Category Distribution
-  const categoryData = [
-    { name: "Makan & Minum", value: 2450000, color: "#10b981" },
-    { name: "Kebutuhan Rumah", value: 1850000, color: "#0ea5e9" },
-    { name: "Transportasi", value: 950000, color: "#f59e0b" },
-    { name: "Tagihan & Listrik", value: 750000, color: "#8b5cf6" },
-    { name: "Hiburan & Jajan", value: 650000, color: "#ec4899" },
-  ];
+      if (savedWallets) setWallets(JSON.parse(savedWallets));
+      if (savedGoals) setGoals(JSON.parse(savedGoals));
+      if (savedTx) setTransactions(JSON.parse(savedTx));
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoaded(true);
+    }
+  }, []);
 
-  // Calculated Metrics
-  const totalNetWorth = wallets.reduce((acc, curr) => acc + curr.balance, 0);
-  const monthlyIncome = 12500000;
-  const monthlyExpense = 6200000;
-  const totalSavings = goals.reduce((acc, curr) => acc + curr.currentAmount, 0);
-  const budgetLimit = 8000000;
+  // Save to LocalStorage whenever state changes
+  useEffect(() => {
+    if (!isLoaded) return;
+    try {
+      localStorage.setItem("fintrack_wallets", JSON.stringify(wallets));
+      localStorage.setItem("fintrack_goals", JSON.stringify(goals));
+      localStorage.setItem("fintrack_transactions", JSON.stringify(transactions));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [wallets, goals, transactions, isLoaded]);
 
-  // Add Transaction Handler
+  // Handle Add Transaction
   const handleAddTransaction = (newTx: TransactionItem) => {
     setTransactions((prev) => [newTx, ...prev]);
 
@@ -87,6 +96,91 @@ export default function Home() {
     );
   };
 
+  // Handle Add Wallet
+  const handleAddWallet = (newWallet: WalletItem) => {
+    setWallets((prev) => [...prev, newWallet]);
+  };
+
+  // Handle Add Goal
+  const handleAddGoal = (newGoal: SavingsGoalItem) => {
+    setGoals((prev) => [...prev, newGoal]);
+  };
+
+  // Handle Deposit to Goal
+  const handleDepositGoal = (goalId: string, walletId: string, amount: number) => {
+    // 1. Deduct from wallet
+    const sourceWallet = wallets.find((w) => w.id === walletId);
+    if (!sourceWallet || sourceWallet.balance < amount) {
+      alert("Saldo dompet tidak mencukupi untuk melakukan setoran tabungan ini.");
+      return;
+    }
+
+    setWallets((prev) =>
+      prev.map((w) => (w.id === walletId ? { ...w, balance: w.balance - amount } : w))
+    );
+
+    // 2. Add to goal
+    const targetGoal = goals.find((g) => g.id === goalId);
+    setGoals((prev) =>
+      prev.map((g) => (g.id === goalId ? { ...g, currentAmount: g.currentAmount + amount } : g))
+    );
+
+    // 3. Record transaction as transfer to savings
+    const depositTx: TransactionItem = {
+      id: "tx-" + Date.now(),
+      type: "TRANSFER",
+      amount: amount,
+      category: "Tabungan",
+      wallet: sourceWallet.name,
+      destinationWallet: `Target: ${targetGoal?.title || "Tabungan"}`,
+      description: `Setor tabungan: ${targetGoal?.title || "Target"}`,
+      date: new Date().toISOString(),
+      tags: ["#tabungan"],
+    };
+    setTransactions((prev) => [depositTx, ...prev]);
+  };
+
+  // Real Metric Calculations
+  const totalNetWorth = wallets.reduce((acc, curr) => acc + curr.balance, 0);
+
+  const monthlyIncome = transactions
+    .filter((t) => t.type === "INCOME")
+    .reduce((acc, curr) => acc + curr.amount, 0);
+
+  const monthlyExpense = transactions
+    .filter((t) => t.type === "EXPENSE")
+    .reduce((acc, curr) => acc + curr.amount, 0);
+
+  const totalSavings = goals.reduce((acc, curr) => acc + curr.currentAmount, 0);
+  const budgetLimit = 8000000; // default initial target budget
+
+  // Dynamic Category Breakdown from Real Expenses
+  const categoryMap = new Map<string, number>();
+  transactions
+    .filter((t) => t.type === "EXPENSE")
+    .forEach((t) => {
+      const current = categoryMap.get(t.category) || 0;
+      categoryMap.set(t.category, current + t.amount);
+    });
+
+  const categoryColors = ["#10b981", "#0ea5e9", "#f59e0b", "#8b5cf6", "#ec4899", "#14b8a6", "#6366f1"];
+  const dynamicCategoryData = Array.from(categoryMap.entries()).map(([name, value], i) => ({
+    name,
+    value,
+    color: categoryColors[i % categoryColors.length],
+  }));
+
+  const categoryData =
+    dynamicCategoryData.length > 0
+      ? dynamicCategoryData
+      : [{ name: "Belum Ada Pengeluaran", value: 1, color: "#27272a" }];
+
+  // Dynamic Cash Flow Data
+  const dynamicCashFlowData = [
+    { month: "Aktif", pemasukan: monthlyIncome, pengeluaran: monthlyExpense },
+  ];
+
+
   return (
     <div className="flex min-h-screen bg-[#09090b] text-zinc-100 font-sans selection:bg-emerald-500/30 selection:text-emerald-300">
       {/* NAVIGATION */}
@@ -94,6 +188,7 @@ export default function Home() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenQuickAdd={() => setIsQuickAddOpen(true)}
+        currentUser={currentUser}
       />
 
       {/* MAIN CONTENT WRAPPER */}
@@ -102,15 +197,15 @@ export default function Home() {
         <header className="h-16 border-b border-[#27272a] px-6 flex items-center justify-between bg-[#09090b]/80 backdrop-blur-md sticky top-0 z-30">
           <div>
             <h1 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
-              Selamat Datang Kembali
-              <span className="text-xs font-normal text-zinc-500 hidden sm:inline">• Periode Oktober 2026</span>
+              Halo, {currentUser?.name || "Monn"}
+              <span className="text-xs font-normal text-zinc-500 hidden sm:inline">• Periode {currentMonthName}</span>
             </h1>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#121215] border border-[#27272a] text-xs text-zinc-400">
               <Heart className="w-3.5 h-3.5 text-rose-400" />
-              <span>Ruang Keuangan Bersama</span>
+              <span>Ruang Keuangan {currentUser?.user === "partner" ? "Pasangan" : "Bersama"}</span>
             </div>
 
             <button
@@ -125,6 +220,38 @@ export default function Home() {
 
         {/* BODY CONTENT BY TAB */}
         <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl w-full mx-auto">
+          {/* WELCOME BANNER ON FRESH START */}
+          {wallets.length === 0 && (
+            <div className="p-5 rounded-2xl bg-[#121215] border border-emerald-500/30 shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Sparkles className="w-4 h-4 text-emerald-400" />
+                  <h3 className="text-sm font-bold text-white">Selamat Datang di FinTrack!</h3>
+                </div>
+                <p className="text-xs text-zinc-400 leading-relaxed max-w-xl">
+                  Sistem telah dikosongkan dan siap untuk mencatat data riil Anda. Langkah pertama: buat dompet atau rekening bank Anda untuk mulai mencatat saldo riil.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setIsAddWalletOpen(true)}
+                  className="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shadow-sm"
+                >
+                  <Building2 className="w-4 h-4" />
+                  <span>Tambah Dompet Baru</span>
+                </button>
+                <button
+                  onClick={() => setIsAddGoalOpen(true)}
+                  className="px-3.5 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-medium flex items-center gap-2 transition-all cursor-pointer"
+                >
+                  <PiggyBank className="w-4 h-4" />
+                  <span>Buat Target</span>
+                </button>
+              </div>
+            </div>
+          )}
+
           {activeTab === "dashboard" && (
             <>
               {/* 1. METRIC CARDS */}
@@ -142,24 +269,34 @@ export default function Home() {
                   totalBalance: totalNetWorth,
                   income: monthlyIncome,
                   expense: monthlyExpense,
-                  topCategory: "Makan & Minum",
-                  activeGoalTitle: "Dana Darurat",
-                  goalCurrent: 18500000,
-                  goalTarget: 30000000,
+                  topCategory: dynamicCategoryData[0]?.name || "Belum Ada",
+                  activeGoalTitle: goals[0]?.title || "Belum Ditetapkan",
+                  goalCurrent: goals[0]?.currentAmount || 0,
+                  goalTarget: goals[0]?.targetAmount || 0,
                 }}
               />
 
               {/* 3. CHARTS */}
               <AnalyticsCharts
-                cashFlowData={cashFlowData}
+                cashFlowData={dynamicCashFlowData}
                 categoryData={categoryData}
               />
 
               {/* 4. WALLETS PREVIEW */}
-              <WalletList wallets={wallets} />
+              <WalletList
+                wallets={wallets}
+                onAddWallet={() => setIsAddWalletOpen(true)}
+              />
 
               {/* 5. SAVINGS GOALS */}
-              <SavingsGoalsList goals={goals} />
+              <SavingsGoalsList
+                goals={goals}
+                onAddGoal={() => setIsAddGoalOpen(true)}
+                onDepositGoal={(goalId) => {
+                  const g = goals.find((item) => item.id === goalId);
+                  if (g) setDepositingGoal(g);
+                }}
+              />
 
               {/* 6. RECENT TRANSACTIONS */}
               <TransactionFeed transactions={transactions} />
@@ -176,7 +313,7 @@ export default function Home() {
             <div className="space-y-4">
               <WalletList
                 wallets={wallets}
-                onAddWallet={() => setIsQuickAddOpen(true)}
+                onAddWallet={() => setIsAddWalletOpen(true)}
               />
             </div>
           )}
@@ -185,7 +322,11 @@ export default function Home() {
             <div className="space-y-4">
               <SavingsGoalsList
                 goals={goals}
-                onAddGoal={() => setIsQuickAddOpen(true)}
+                onAddGoal={() => setIsAddGoalOpen(true)}
+                onDepositGoal={(goalId) => {
+                  const g = goals.find((item) => item.id === goalId);
+                  if (g) setDepositingGoal(g);
+                }}
               />
             </div>
           )}
@@ -193,7 +334,7 @@ export default function Home() {
           {activeTab === "analytics" && (
             <div className="space-y-6">
               <AnalyticsCharts
-                cashFlowData={cashFlowData}
+                cashFlowData={dynamicCashFlowData}
                 categoryData={categoryData}
               />
             </div>
@@ -201,12 +342,35 @@ export default function Home() {
         </div>
       </main>
 
-      {/* QUICK ADD MODAL (SMART AI + MANUAL) */}
+      {/* MODAL 1: QUICK ADD TRANSACTION (SMART AI + MANUAL) */}
       <QuickAddModal
         isOpen={isQuickAddOpen}
         onClose={() => setIsQuickAddOpen(false)}
         wallets={wallets}
         onAddTransaction={handleAddTransaction}
+      />
+
+      {/* MODAL 2: ADD NEW WALLET */}
+      <AddWalletModal
+        isOpen={isAddWalletOpen}
+        onClose={() => setIsAddWalletOpen(false)}
+        onAddWallet={handleAddWallet}
+      />
+
+      {/* MODAL 3: ADD NEW SAVINGS GOAL */}
+      <AddGoalModal
+        isOpen={isAddGoalOpen}
+        onClose={() => setIsAddGoalOpen(false)}
+        onAddGoal={handleAddGoal}
+      />
+
+      {/* MODAL 4: DEPOSIT TO GOAL */}
+      <DepositGoalModal
+        isOpen={!!depositingGoal}
+        onClose={() => setDepositingGoal(null)}
+        goal={depositingGoal}
+        wallets={wallets}
+        onDeposit={handleDepositGoal}
       />
     </div>
   );
