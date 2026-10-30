@@ -73,7 +73,7 @@ export default function QuickAddModal({
         );
         if (matchedWallet) setWalletId(matchedWallet.id);
 
-        setActiveTab("manual"); // Switch to manual tab so user can review and confirm
+        setActiveTab("manual");
       }
     } catch (err) {
       console.error(err);
@@ -107,7 +107,6 @@ export default function QuickAddModal({
       tags,
     });
 
-    // Reset & close
     setAmount("");
     setDescription("");
     setAiPrompt("");
@@ -116,54 +115,54 @@ export default function QuickAddModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-[#121215] border border-[#27272a] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
-        {/* MODAL HEADER */}
-        <div className="p-4 border-b border-[#27272a] flex items-center justify-between">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+        {/* HEADER */}
+        <div className="p-4 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold text-white">Catat Transaksi</h3>
-            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-400">
+            <h3 className="text-sm font-bold text-slate-900">Catat Transaksi</h3>
+            <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700">
               Baru
             </span>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+            className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* TABS */}
-        <div className="flex border-b border-[#27272a] bg-[#09090b]">
+        <div className="flex border-b border-slate-200 bg-slate-50">
           <button
             onClick={() => setActiveTab("ai")}
-            className={`flex-1 py-2.5 text-xs font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer ${
+            className={`flex-1 py-2.5 text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer ${
               activeTab === "ai"
-                ? "text-emerald-400 border-b-2 border-emerald-400 bg-[#121215]"
-                : "text-zinc-400 hover:text-zinc-200"
+                ? "text-blue-700 border-b-2 border-blue-600 bg-white"
+                : "text-slate-500 hover:text-slate-800"
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5" />
+            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
             <span>AI Smart Logger</span>
           </button>
           <button
             onClick={() => setActiveTab("manual")}
-            className={`flex-1 py-2.5 text-xs font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer ${
+            className={`flex-1 py-2.5 text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer ${
               activeTab === "manual"
-                ? "text-emerald-400 border-b-2 border-emerald-400 bg-[#121215]"
-                : "text-zinc-400 hover:text-zinc-200"
+                ? "text-blue-700 border-b-2 border-blue-600 bg-white"
+                : "text-slate-500 hover:text-slate-800"
             }`}
           >
             <span>Form Manual</span>
           </button>
         </div>
 
-        {/* TAB 1: AI SMART LOGGER */}
+        {/* TAB 1: AI */}
         {activeTab === "ai" ? (
           <div className="p-5 space-y-4">
             <div>
-              <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Ketik kalimat bebas transaksi Anda:
               </label>
               <textarea
@@ -171,23 +170,23 @@ export default function QuickAddModal({
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
                 placeholder="Contoh: Makan soto 35rb bayar pake Gopay tadi siang&#10;atau: Gaji freelance 2.5jt masuk rekening BCA"
-                className="w-full bg-[#09090b] border border-[#27272a] rounded-xl p-3 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500/50 resize-none font-sans"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-100 resize-none font-sans"
               />
             </div>
 
-            <div className="p-3 rounded-xl bg-[#09090b]/50 border border-[#27272a] text-[11px] text-zinc-400 space-y-1">
-              <p className="font-semibold text-zinc-300 flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-emerald-400" />
-                Tips Cerdas:
+            <div className="p-3.5 rounded-xl bg-blue-50/70 border border-blue-100 text-[11px] text-slate-600 space-y-1">
+              <p className="font-bold text-blue-900 flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-blue-600" />
+                Tips Penggunaan:
               </p>
-              <p>• Sebutkan nominal (misal: 25rb, 50k, 1.5jt) dan nama dompet jika ingin otomatis terpilih.</p>
-              <p>• AI akan otomatis mendeteksi apakah itu pengeluaran atau pemasukan.</p>
+              <p>• Masukkan nominal (misal: 25rb, 50k, 1.5jt) dan nama akun/dompet Anda.</p>
+              <p>• AI akan otomatis menentukan jenis transaksi, kategori, dan nominalnya.</p>
             </div>
 
             <button
               onClick={handleAiParse}
               disabled={isAiLoading || !aiPrompt.trim()}
-              className="w-full py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
+              className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer shadow-md shadow-blue-500/20"
             >
               <Sparkles className="w-4 h-4" />
               <span>{isAiLoading ? "Sedang Menganalisis..." : "Ekstrak & Isi Form"}</span>
@@ -195,15 +194,15 @@ export default function QuickAddModal({
             </button>
           </div>
         ) : (
-          /* TAB 2: MANUAL FORM */
+          /* TAB 2: MANUAL */
           <form onSubmit={handleSubmit} className="p-5 space-y-4">
             {/* TYPE SWITCHER */}
-            <div className="grid grid-cols-3 gap-1 bg-[#09090b] border border-[#27272a] p-1 rounded-xl text-xs">
+            <div className="grid grid-cols-3 gap-1 bg-slate-100 border border-slate-200 p-1 rounded-xl text-xs">
               <button
                 type="button"
                 onClick={() => setType("EXPENSE")}
-                className={`py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
-                  type === "EXPENSE" ? "bg-rose-500 text-white" : "text-zinc-400 hover:text-white"
+                className={`py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                  type === "EXPENSE" ? "bg-rose-500 text-white shadow-xs" : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 Pengeluaran
@@ -211,8 +210,8 @@ export default function QuickAddModal({
               <button
                 type="button"
                 onClick={() => setType("INCOME")}
-                className={`py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
-                  type === "INCOME" ? "bg-emerald-500 text-black font-semibold" : "text-zinc-400 hover:text-white"
+                className={`py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                  type === "INCOME" ? "bg-emerald-600 text-white shadow-xs" : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 Pemasukan
@@ -220,8 +219,8 @@ export default function QuickAddModal({
               <button
                 type="button"
                 onClick={() => setType("TRANSFER")}
-                className={`py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
-                  type === "TRANSFER" ? "bg-sky-500 text-white" : "text-zinc-400 hover:text-white"
+                className={`py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                  type === "TRANSFER" ? "bg-blue-600 text-white shadow-xs" : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 Transfer
@@ -230,11 +229,11 @@ export default function QuickAddModal({
 
             {/* AMOUNT */}
             <div>
-              <label className="block text-xs font-medium text-zinc-300 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Nominal (IDR)
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-zinc-500">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-slate-400">
                   Rp
                 </span>
                 <input
@@ -243,7 +242,7 @@ export default function QuickAddModal({
                   placeholder="0"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="w-full bg-[#09090b] border border-[#27272a] rounded-xl pl-10 pr-3 py-2 text-sm text-white font-mono font-bold placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-slate-900 font-mono font-bold placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-100"
                 />
               </div>
             </div>
@@ -251,13 +250,13 @@ export default function QuickAddModal({
             {/* WALLET SELECTION */}
             <div className={type === "TRANSFER" ? "grid grid-cols-2 gap-3" : "block"}>
               <div>
-                <label className="block text-xs font-medium text-zinc-300 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   {type === "TRANSFER" ? "Dari Dompet" : "Dompet / Akun"}
                 </label>
                 <select
                   value={walletId}
                   onChange={(e) => setWalletId(e.target.value)}
-                  className="w-full bg-[#09090b] border border-[#27272a] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500/50"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:bg-white focus:border-blue-500"
                 >
                   {wallets.map((w) => (
                     <option key={w.id} value={w.id}>
@@ -269,13 +268,13 @@ export default function QuickAddModal({
 
               {type === "TRANSFER" && (
                 <div>
-                  <label className="block text-xs font-medium text-zinc-300 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Ke Dompet Tujuan
                   </label>
                   <select
                     value={destinationWalletId}
                     onChange={(e) => setDestinationWalletId(e.target.value)}
-                    className="w-full bg-[#09090b] border border-[#27272a] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500/50"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:bg-white focus:border-blue-500"
                   >
                     {wallets.map((w) => (
                       <option key={w.id} value={w.id}>
@@ -287,16 +286,16 @@ export default function QuickAddModal({
               )}
             </div>
 
-            {/* CATEGORY (for income & expense) */}
+            {/* CATEGORY */}
             {type !== "TRANSFER" && (
               <div>
-                <label className="block text-xs font-medium text-zinc-300 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Kategori
                 </label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full bg-[#09090b] border border-[#27272a] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500/50"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:bg-white focus:border-blue-500"
                 >
                   {categories.map((c) => (
                     <option key={c} value={c}>
@@ -309,29 +308,29 @@ export default function QuickAddModal({
 
             {/* DESCRIPTION */}
             <div>
-              <label className="block text-xs font-medium text-zinc-300 mb-1">
-                Deskripsi / Catatan
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Keterangan
               </label>
               <input
                 type="text"
-                placeholder="misal: Nasi Padang siang, Kopi susu, dll."
+                placeholder="misal: Belanja sayur mingguan, Kopi susu, dll."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full bg-[#09090b] border border-[#27272a] rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500/50"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-500 font-medium"
               />
             </div>
 
             {/* TAGS */}
             <div>
-              <label className="block text-xs font-medium text-zinc-300 mb-1">
-                Tagar (pisahkan dengan koma)
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Tagar (opsional, pisahkan koma)
               </label>
               <input
                 type="text"
-                placeholder="misal: #kuliner, #weekend, #urgent"
+                placeholder="misal: #kuliner, #weekend"
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
-                className="w-full bg-[#09090b] border border-[#27272a] rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500/50 font-mono text-[11px]"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-500 font-mono text-[11px]"
               />
             </div>
 
@@ -339,7 +338,7 @@ export default function QuickAddModal({
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full py-2.5 px-4 rounded-xl bg-zinc-100 hover:bg-white text-black font-semibold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
+                className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md shadow-blue-500/20"
               >
                 <Check className="w-4 h-4" />
                 <span>Simpan Transaksi</span>

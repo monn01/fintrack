@@ -42,67 +42,73 @@ export default function AiAdvisorWidget({ summary }: AiAdvisorWidgetProps) {
   const healthScore = Math.max(35, Math.min(95, 55 + savingsRate));
 
   return (
-    <div className="rounded-2xl bg-gradient-to-br from-[#121c17] via-[#121215] to-[#121215] border border-emerald-500/30 p-5 shadow-sm relative overflow-hidden">
+    <div className="rounded-2xl bg-gradient-to-r from-blue-50/70 via-white to-white border border-blue-200/80 p-5 shadow-sm shadow-blue-500/5 relative overflow-hidden">
       {/* HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-            <Sparkles className="w-4 h-4" />
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20">
+            <Sparkles className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-white text-sm">AI Financial Health Advisor</h3>
-              <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <h3 className="font-bold text-slate-900 text-sm">AI Financial Health Advisor</h3>
+              <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-blue-100 text-blue-700">
                 Skor Keuangan: {healthScore}/100
               </span>
             </div>
-            <p className="text-xs text-zinc-400">Analisis pola belanja & rekomendasi alokasi dana otomatis</p>
+            <p className="text-xs text-slate-500 font-medium">Analisis cerdas pola belanja & rekomendasi alokasi dana otomatis</p>
           </div>
         </div>
 
         <button
           onClick={fetchAdvice}
           disabled={loading}
-          className="self-start sm:self-center flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#18181b] hover:bg-zinc-800 border border-[#27272a] text-xs font-medium text-zinc-300 hover:text-white transition-all disabled:opacity-50 cursor-pointer"
+          className="self-start sm:self-center flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 hover:text-blue-600 shadow-sm transition-all disabled:opacity-50 cursor-pointer"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-emerald-400" : ""}`} />
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-blue-600" : ""}`} />
           <span>{loading ? "Menganalisis..." : "Generate Saran AI"}</span>
         </button>
       </div>
 
       {/* ADVICE CONTENT */}
       {advice ? (
-        <div className="mt-3 p-4 rounded-xl bg-[#09090b]/80 border border-emerald-500/20 text-xs text-zinc-300 leading-relaxed space-y-2 whitespace-pre-line font-sans">
+        <div className="mt-3 p-4 rounded-xl bg-white border border-blue-200 text-xs text-slate-700 leading-relaxed space-y-2 whitespace-pre-line font-sans shadow-sm">
           {advice}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
-          <div className="p-3.5 rounded-xl bg-[#09090b]/60 border border-[#27272a] flex items-start gap-2.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+          <div className="p-4 rounded-xl bg-white border border-slate-200/80 shadow-sm flex items-start gap-3">
+            <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 shrink-0">
+              <CheckCircle2 className="w-4 h-4" />
+            </div>
             <div>
-              <p className="text-xs font-medium text-white">Rasio Tabungan Ideal</p>
-              <p className="text-[11px] text-zinc-400 mt-0.5">
-                Rasio tabungan Anda saat ini berada di <span className="font-mono text-emerald-400 font-semibold">{savingsRate}%</span>. Rekomendasi minimal untuk stabilitas adalah 20%.
+              <p className="text-xs font-bold text-slate-900">Rasio Tabungan Ideal</p>
+              <p className="text-[11px] text-slate-500 mt-0.5 leading-normal">
+                Rasio tabungan Anda saat ini berada di <span className="font-mono text-emerald-600 font-bold">{savingsRate}%</span>. Rekomendasi minimal untuk stabilitas adalah 20%.
               </p>
             </div>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-[#09090b]/60 border border-[#27272a] flex items-start gap-2.5">
-            <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+          <div className="p-4 rounded-xl bg-white border border-slate-200/80 shadow-sm flex items-start gap-3">
+            <div className="p-1.5 rounded-lg bg-amber-50 text-amber-600 shrink-0">
+              <AlertTriangle className="w-4 h-4" />
+            </div>
             <div>
-              <p className="text-xs font-medium text-white">Pos Belanja Utama</p>
-              <p className="text-[11px] text-zinc-400 mt-0.5">
-                Kategori <span className="text-amber-300 font-medium">{summary.topCategory || "Makan & Minum"}</span> mendominasi pengeluaran. Tekan jajan di luar untuk hemat Rp 500rb/bln.
+              <p className="text-xs font-bold text-slate-900">Pos Belanja Utama</p>
+              <p className="text-[11px] text-slate-500 mt-0.5 leading-normal">
+                Kategori <span className="text-amber-700 font-bold">{summary.topCategory || "Makan & Minum"}</span> mendominasi pengeluaran. Tekan jajan di luar untuk hemat Rp 500rb/bln.
               </p>
             </div>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-[#09090b]/60 border border-[#27272a] flex items-start gap-2.5">
-            <ArrowUpRight className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
+          <div className="p-4 rounded-xl bg-white border border-slate-200/80 shadow-sm flex items-start gap-3">
+            <div className="p-1.5 rounded-lg bg-blue-50 text-blue-600 shrink-0">
+              <ArrowUpRight className="w-4 h-4" />
+            </div>
             <div>
-              <p className="text-xs font-medium text-white">Akselerasi Tabungan</p>
-              <p className="text-[11px] text-zinc-400 mt-0.5">
-                Target <span className="text-sky-300 font-medium">{summary.activeGoalTitle}</span> tercapai 2 bulan lebih cepat jika menyisihkan bonus di awal bulan.
+              <p className="text-xs font-bold text-slate-900">Akselerasi Tabungan</p>
+              <p className="text-[11px] text-slate-500 mt-0.5 leading-normal">
+                Target <span className="text-blue-700 font-bold">{summary.activeGoalTitle}</span> tercapai lebih cepat jika menyisihkan bonus di awal bulan.
               </p>
             </div>
           </div>

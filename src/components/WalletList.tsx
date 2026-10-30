@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Building2, Smartphone, Banknote, ShieldCheck, Plus, Users, ArrowUpRight } from "lucide-react";
+import { Building2, Smartphone, Banknote, ShieldCheck, Plus, Users } from "lucide-react";
 import { formatRupiah } from "@/lib/utils";
 
 export interface WalletItem {
@@ -22,29 +22,29 @@ export default function WalletList({ wallets, onAddWallet }: WalletListProps) {
   const getWalletIcon = (type: string) => {
     switch (type) {
       case "BANK":
-        return <Building2 className="w-4 h-4 text-sky-400" />;
+        return <Building2 className="w-5 h-5 text-blue-600" />;
       case "EWALLET":
-        return <Smartphone className="w-4 h-4 text-emerald-400" />;
+        return <Smartphone className="w-5 h-5 text-indigo-600" />;
       case "CASH":
-        return <Banknote className="w-4 h-4 text-amber-400" />;
+        return <Banknote className="w-5 h-5 text-emerald-600" />;
       case "INVESTMENT":
-        return <ShieldCheck className="w-4 h-4 text-purple-400" />;
+        return <ShieldCheck className="w-5 h-5 text-purple-600" />;
       default:
-        return <Building2 className="w-4 h-4 text-zinc-400" />;
+        return <Building2 className="w-5 h-5 text-slate-600" />;
     }
   };
 
   return (
-    <div className="p-5 rounded-2xl bg-[#121215] border border-[#27272a] shadow-sm">
+    <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm shadow-slate-200/40">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-sm font-semibold text-white">Dompet & Rekening</h3>
-          <p className="text-xs text-zinc-500">Daftar saldo per akun dan dompet bersama pasangan</p>
+          <h3 className="text-sm font-bold text-slate-900">Dompet & Rekening</h3>
+          <p className="text-xs text-slate-500">Daftar saldo per rekening bank dan dompet bersama</p>
         </div>
         {onAddWallet && (
           <button
             onClick={onAddWallet}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#18181b] hover:bg-zinc-800 border border-[#27272a] text-xs font-medium text-zinc-300 hover:text-white transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold transition-all cursor-pointer border border-blue-200"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Tambah</span>
@@ -53,18 +53,18 @@ export default function WalletList({ wallets, onAddWallet }: WalletListProps) {
       </div>
 
       {wallets.length === 0 ? (
-        <div className="py-10 px-4 rounded-xl bg-[#09090b]/60 border border-dashed border-[#27272a] text-center flex flex-col items-center justify-center">
-          <div className="w-10 h-10 rounded-xl bg-zinc-800/80 flex items-center justify-center text-zinc-400 mb-2">
+        <div className="py-10 px-4 rounded-xl bg-slate-50/70 border border-dashed border-slate-200 text-center flex flex-col items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-blue-100/70 text-blue-600 flex items-center justify-center mb-2">
             <Building2 className="w-5 h-5" />
           </div>
-          <p className="text-xs font-semibold text-white">Belum ada dompet atau rekening</p>
-          <p className="text-[11px] text-zinc-500 max-w-sm mt-0.5 mb-3">
-            Tambahkan rekening bank, e-wallet (GoPay, OVO), atau kas tunai pertama Anda untuk mulai mencatat keuangan.
+          <p className="text-xs font-bold text-slate-800">Belum ada dompet atau rekening</p>
+          <p className="text-[11px] text-slate-500 max-w-sm mt-0.5 mb-3">
+            Tambahkan rekening bank, e-wallet (GoPay, OVO), atau kas tunai pertama Anda.
           </p>
           {onAddWallet && (
             <button
               onClick={onAddWallet}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-semibold transition-all cursor-pointer shadow-sm"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-all cursor-pointer shadow-sm shadow-blue-500/20"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Tambah Dompet Pertama</span>
@@ -76,25 +76,25 @@ export default function WalletList({ wallets, onAddWallet }: WalletListProps) {
           {wallets.map((wallet) => (
             <div
               key={wallet.id}
-              className="p-4 rounded-xl bg-[#09090b]/80 border border-[#27272a] hover:border-zinc-700 transition-all flex flex-col justify-between group"
+              className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/90 hover:border-blue-400 hover:bg-blue-50/30 transition-all flex flex-col justify-between group shadow-xs"
             >
               <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-[#18181b] border border-[#27272a]">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-white border border-slate-200 shadow-2xs">
                     {getWalletIcon(wallet.type)}
                   </div>
                   <div>
-                    <h4 className="text-xs font-semibold text-white group-hover:text-emerald-400 transition-colors">
+                    <h4 className="text-xs font-bold text-slate-800 group-hover:text-blue-600 transition-colors">
                       {wallet.name}
                     </h4>
                     {wallet.accountNumber && (
-                      <p className="text-[10px] text-zinc-500 font-mono">{wallet.accountNumber}</p>
+                      <p className="text-[10px] text-slate-500 font-mono">{wallet.accountNumber}</p>
                     )}
                   </div>
                 </div>
 
                 {wallet.isShared && (
-                  <span className="flex items-center gap-1 text-[9px] uppercase font-semibold tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <span className="flex items-center gap-1 text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 border border-blue-200">
                     <Users className="w-2.5 h-2.5" />
                     Bersama
                   </span>
@@ -102,8 +102,8 @@ export default function WalletList({ wallets, onAddWallet }: WalletListProps) {
               </div>
 
               <div>
-                <p className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Saldo</p>
-                <p className="text-lg font-bold text-white font-mono tracking-tight mt-0.5">
+                <p className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Saldo</p>
+                <p className="text-lg font-bold text-slate-900 font-mono tracking-tight mt-0.5">
                   {formatRupiah(wallet.balance)}
                 </p>
               </div>

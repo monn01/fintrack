@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, PiggyBank, Calendar, Check, Users } from "lucide-react";
+import { X, Check, Users } from "lucide-react";
 import { SavingsGoalItem } from "./SavingsGoalsList";
 
 interface AddGoalModalProps {
@@ -50,23 +50,22 @@ export default function AddGoalModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-[#121215] border border-[#27272a] rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
-        <div className="p-4 border-b border-[#27272a] flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-white">Buat Target Tabungan Baru</h3>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+        <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+          <h3 className="text-sm font-bold text-slate-900">Buat Target Tabungan Baru</h3>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+            className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
-          {/* TITLE */}
           <div>
-            <label className="block text-xs font-medium text-zinc-300 mb-1">
-              Nama / Judul Target:
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
+              Nama / Judul Target
             </label>
             <input
               type="text"
@@ -74,17 +73,16 @@ export default function AddGoalModal({
               placeholder="misal: Dana Darurat, Liburan Akhir Tahun, Beli Motor"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full bg-[#09090b] border border-[#27272a] rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500/50"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-500 font-medium"
             />
           </div>
 
-          {/* TARGET AMOUNT */}
           <div>
-            <label className="block text-xs font-medium text-zinc-300 mb-1">
-              Target Nominal yang Ingin Dicapai:
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
+              Target Nominal yang Ingin Dicapai
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-zinc-500">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-slate-400">
                 Rp
               </span>
               <input
@@ -93,18 +91,17 @@ export default function AddGoalModal({
                 placeholder="0"
                 value={targetAmount}
                 onChange={(e) => setTargetAmount(e.target.value)}
-                className="w-full bg-[#09090b] border border-[#27272a] rounded-xl pl-10 pr-3 py-2 text-sm text-white font-mono font-bold placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3.5 py-2 text-sm text-slate-900 font-mono font-bold placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-500"
               />
             </div>
           </div>
 
-          {/* INITIAL AMOUNT */}
           <div>
-            <label className="block text-xs font-medium text-zinc-300 mb-1">
-              Saldo Awal yang Sudah Terkumpul (Opsional):
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
+              Saldo Awal yang Sudah Terkumpul (Opsional)
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-zinc-500">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-slate-400">
                 Rp
               </span>
               <input
@@ -112,46 +109,42 @@ export default function AddGoalModal({
                 placeholder="0"
                 value={initialAmount}
                 onChange={(e) => setInitialAmount(e.target.value)}
-                className="w-full bg-[#09090b] border border-[#27272a] rounded-xl pl-10 pr-3 py-2 text-sm text-white font-mono font-bold placeholder-zinc-600 focus:outline-none focus:border-emerald-500/50"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3.5 py-2 text-sm text-slate-900 font-mono font-bold placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-500"
               />
             </div>
           </div>
 
-          {/* TARGET DATE */}
           <div>
-            <label className="block text-xs font-medium text-zinc-300 mb-1">
-              Target Tanggal Tercapai (Opsional):
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
+              Target Tanggal Tercapai (Opsional)
             </label>
-            <div className="relative">
-              <input
-                type="date"
-                value={targetDate}
-                onChange={(e) => setTargetDate(e.target.value)}
-                className="w-full bg-[#09090b] border border-[#27272a] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500/50"
-              />
-            </div>
+            <input
+              type="date"
+              value={targetDate}
+              onChange={(e) => setTargetDate(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:bg-white focus:border-blue-500 font-medium"
+            />
           </div>
 
-          {/* SHARED GOAL TOGGLE */}
-          <div className="p-3 rounded-xl bg-[#09090b] border border-[#27272a] flex items-center justify-between">
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-emerald-400" />
+              <Users className="w-4 h-4 text-blue-600" />
               <div>
-                <p className="text-xs font-medium text-white">Target Tabungan Bersama</p>
-                <p className="text-[10px] text-zinc-500">Dapat dipantau & disetor bersama pasangan</p>
+                <p className="text-xs font-bold text-slate-900">Target Tabungan Bersama</p>
+                <p className="text-[10px] text-slate-500 font-medium">Dapat dipantau & disetor bersama pasangan</p>
               </div>
             </div>
             <input
               type="checkbox"
               checked={isShared}
               onChange={(e) => setIsShared(e.target.checked)}
-              className="w-4 h-4 rounded border-zinc-700 text-emerald-500 focus:ring-0 cursor-pointer accent-emerald-500"
+              className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer accent-blue-600"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full py-2.5 px-4 rounded-xl bg-zinc-100 hover:bg-white text-black font-semibold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer mt-2"
+            className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md shadow-blue-500/20 mt-2"
           >
             <Check className="w-4 h-4" />
             <span>Simpan Target Tabungan</span>

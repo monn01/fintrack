@@ -24,61 +24,67 @@ export default function MetricCards({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {/* NET WORTH CARD */}
-      <div className="p-5 rounded-2xl bg-[#121215] border border-[#27272a] shadow-sm relative overflow-hidden group">
-        <div className="flex items-center justify-between text-zinc-400 mb-2">
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-400">Total Kekayaan Bersih</span>
-          <div className="p-2 rounded-xl bg-zinc-800/80 text-zinc-300">
-            <Wallet className="w-4 h-4" />
+      {/* 1. NET WORTH CARD */}
+      <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm shadow-slate-200/40 relative">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Total Saldo Bersih
+          </span>
+          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <Wallet className="w-5 h-5" />
           </div>
         </div>
-        <div className="text-2xl lg:text-3xl font-bold tracking-tight text-white font-mono mb-2">
+        <div className="text-2xl font-bold tracking-tight text-slate-900 font-mono mb-1">
           {formatRupiah(netWorth)}
         </div>
-        <p className="text-xs text-zinc-500 flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-          Akumulasi seluruh dompet aktif
+        <p className="text-[11px] text-slate-500 flex items-center gap-1.5 font-medium">
+          <span className="w-2 h-2 rounded-full bg-blue-600 inline-block"></span>
+          Akumulasi seluruh rekening & dompet
         </p>
       </div>
 
-      {/* MONTHLY INCOME CARD */}
-      <div className="p-5 rounded-2xl bg-[#121215] border border-[#27272a] shadow-sm relative overflow-hidden group">
-        <div className="flex items-center justify-between text-zinc-400 mb-2">
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-400">Pemasukan Bulan Ini</span>
-          <div className="p-2 rounded-xl bg-emerald-950/40 text-emerald-400 border border-emerald-500/20">
-            <TrendingUp className="w-4 h-4" />
+      {/* 2. MONTHLY INCOME CARD */}
+      <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm shadow-slate-200/40 relative">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Pemasukan Bulan Ini
+          </span>
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <TrendingUp className="w-5 h-5" />
           </div>
         </div>
-        <div className="text-2xl lg:text-3xl font-bold tracking-tight text-emerald-400 font-mono mb-2">
+        <div className="text-2xl font-bold tracking-tight text-emerald-600 font-mono mb-1">
           +{formatRupiah(monthlyIncome)}
         </div>
-        <p className="text-xs text-zinc-400">
+        <p className="text-[11px] text-slate-500 font-medium">
           Gaji & pemasukan terverifikasi
         </p>
       </div>
 
-      {/* MONTHLY EXPENSE CARD */}
-      <div className="p-5 rounded-2xl bg-[#121215] border border-[#27272a] shadow-sm relative overflow-hidden group">
-        <div className="flex items-center justify-between text-zinc-400 mb-2">
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-400">Pengeluaran Bulan Ini</span>
-          <div className="p-2 rounded-xl bg-rose-950/40 text-rose-400 border border-rose-500/20">
-            <TrendingDown className="w-4 h-4" />
+      {/* 3. MONTHLY EXPENSE CARD */}
+      <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm shadow-slate-200/40 relative">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Pengeluaran Bulan Ini
+          </span>
+          <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+            <TrendingDown className="w-5 h-5" />
           </div>
         </div>
-        <div className="text-2xl lg:text-3xl font-bold tracking-tight text-rose-400 font-mono mb-2">
+        <div className="text-2xl font-bold tracking-tight text-rose-600 font-mono mb-1">
           -{formatRupiah(monthlyExpense)}
         </div>
         <div className="space-y-1">
-          <div className="flex justify-between text-[11px] text-zinc-400">
-            <span>Batas Budget ({expensePercentage}%)</span>
-            <span className={isOverBudget ? "text-rose-400 font-medium" : "text-zinc-500"}>
+          <div className="flex justify-between text-[11px] text-slate-500 font-medium">
+            <span>Batas ({expensePercentage}%)</span>
+            <span className={isOverBudget ? "text-rose-600 font-semibold" : "text-slate-600"}>
               Max {formatRupiah(budgetLimit)}
             </span>
           </div>
-          <div className="h-1.5 w-full bg-zinc-800 rounded-full overflow-hidden">
+          <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full transition-all duration-300 ${
-                isOverBudget ? "bg-rose-500" : "bg-emerald-500"
+                isOverBudget ? "bg-rose-500" : "bg-blue-600"
               }`}
               style={{ width: `${expensePercentage}%` }}
             />
@@ -86,19 +92,21 @@ export default function MetricCards({
         </div>
       </div>
 
-      {/* SAVINGS GOALS SUMMARY CARD */}
-      <div className="p-5 rounded-2xl bg-[#121215] border border-[#27272a] shadow-sm relative overflow-hidden group">
-        <div className="flex items-center justify-between text-zinc-400 mb-2">
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-400">Tabungan Terkumpul</span>
-          <div className="p-2 rounded-xl bg-sky-950/40 text-sky-400 border border-sky-500/20">
-            <Target className="w-4 h-4" />
+      {/* 4. TOTAL SAVINGS CARD */}
+      <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm shadow-slate-200/40 relative">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Tabungan Terkumpul
+          </span>
+          <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+            <Target className="w-5 h-5" />
           </div>
         </div>
-        <div className="text-2xl lg:text-3xl font-bold tracking-tight text-white font-mono mb-2">
+        <div className="text-2xl font-bold tracking-tight text-slate-900 font-mono mb-1">
           {formatRupiah(totalSavings)}
         </div>
-        <p className="text-xs text-sky-400 flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
+        <p className="text-[11px] text-slate-500 font-medium flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>
           Dana tersimpan di target tabungan
         </p>
       </div>

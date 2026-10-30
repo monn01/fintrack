@@ -11,7 +11,6 @@ import {
   PieChart,
   Pie,
   Cell,
-  Legend,
 } from "recharts";
 import { formatRupiah } from "@/lib/utils";
 
@@ -35,16 +34,16 @@ interface AnalyticsChartsProps {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-[#121215] border border-[#27272a] p-3 rounded-xl shadow-xl text-xs">
-        <p className="font-semibold text-white mb-1.5">{label}</p>
+      <div className="bg-white border border-slate-200 p-3 rounded-xl shadow-lg text-xs">
+        <p className="font-bold text-slate-800 mb-1.5">{label}</p>
         {payload.map((entry: any, index: number) => (
           <div key={`item-${index}`} className="flex items-center gap-2 font-mono">
             <span
-              className="w-2 h-2 rounded-full inline-block"
+              className="w-2.5 h-2.5 rounded-full inline-block"
               style={{ backgroundColor: entry.color }}
             />
-            <span className="text-zinc-400 capitalize">{entry.name}:</span>
-            <span className="font-bold text-white">
+            <span className="text-slate-500 capitalize">{entry.name}:</span>
+            <span className="font-bold text-slate-900">
               {formatRupiah(entry.value)}
             </span>
           </div>
@@ -59,18 +58,18 @@ export default function AnalyticsCharts({ cashFlowData, categoryData }: Analytic
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
       {/* CASH FLOW AREA CHART */}
-      <div className="lg:col-span-2 p-5 rounded-2xl bg-[#121215] border border-[#27272a] shadow-sm flex flex-col justify-between">
+      <div className="lg:col-span-2 p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm shadow-slate-200/40 flex flex-col justify-between">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-sm font-semibold text-white">Tren Arus Kas (Cash Flow)</h3>
-            <p className="text-xs text-zinc-500">Perbandingan pemasukan vs pengeluaran 6 bulan terakhir</p>
+            <h3 className="text-sm font-bold text-slate-900">Tren Arus Kas (Cash Flow)</h3>
+            <p className="text-xs text-slate-500">Perbandingan pemasukan vs pengeluaran</p>
           </div>
-          <div className="flex items-center gap-4 text-xs font-mono">
-            <div className="flex items-center gap-1.5 text-emerald-400">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+          <div className="flex items-center gap-4 text-xs font-semibold">
+            <div className="flex items-center gap-1.5 text-blue-600">
+              <span className="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
               <span>Pemasukan</span>
             </div>
-            <div className="flex items-center gap-1.5 text-rose-400">
+            <div className="flex items-center gap-1.5 text-rose-500">
               <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
               <span>Pengeluaran</span>
             </div>
@@ -82,17 +81,17 @@ export default function AnalyticsCharts({ cashFlowData, categoryData }: Analytic
             <AreaChart data={cashFlowData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="incomeGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#2563eb" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="#2563eb" stopOpacity={0.0} />
                 </linearGradient>
                 <linearGradient id="expenseGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#ef4444" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="#ef4444" stopOpacity={0.0} />
                 </linearGradient>
               </defs>
-              <XAxis dataKey="month" stroke="#71717a" fontSize={11} tickLine={false} axisLine={false} />
+              <XAxis dataKey="month" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
               <YAxis
-                stroke="#71717a"
+                stroke="#94a3b8"
                 fontSize={10}
                 tickLine={false}
                 axisLine={false}
@@ -103,8 +102,8 @@ export default function AnalyticsCharts({ cashFlowData, categoryData }: Analytic
                 type="monotone"
                 dataKey="pemasukan"
                 name="Pemasukan"
-                stroke="#10b981"
-                strokeWidth={2}
+                stroke="#2563eb"
+                strokeWidth={2.5}
                 fillOpacity={1}
                 fill="url(#incomeGradient)"
               />
@@ -112,8 +111,8 @@ export default function AnalyticsCharts({ cashFlowData, categoryData }: Analytic
                 type="monotone"
                 dataKey="pengeluaran"
                 name="Pengeluaran"
-                stroke="#f43f5e"
-                strokeWidth={2}
+                stroke="#ef4444"
+                strokeWidth={2.5}
                 fillOpacity={1}
                 fill="url(#expenseGradient)"
               />
@@ -123,10 +122,10 @@ export default function AnalyticsCharts({ cashFlowData, categoryData }: Analytic
       </div>
 
       {/* CATEGORY BREAKDOWN DONUT CHART */}
-      <div className="p-5 rounded-2xl bg-[#121215] border border-[#27272a] shadow-sm flex flex-col justify-between">
+      <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm shadow-slate-200/40 flex flex-col justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-white">Distribusi Pengeluaran</h3>
-          <p className="text-xs text-zinc-500">Porsi pengeluaran berdasarkan kategori bulan ini</p>
+          <h3 className="text-sm font-bold text-slate-900">Distribusi Pengeluaran</h3>
+          <p className="text-xs text-slate-500">Porsi pengeluaran berdasarkan kategori</p>
         </div>
 
         <div className="h-56 w-full my-2">
@@ -142,28 +141,29 @@ export default function AnalyticsCharts({ cashFlowData, categoryData }: Analytic
                 dataKey="value"
               >
                 {categoryData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} stroke="#121215" strokeWidth={2} />
+                  <Cell key={`cell-${index}`} fill={entry.color} stroke="#ffffff" strokeWidth={2} />
                 ))}
               </Pie>
               <Tooltip
                 formatter={(value: any) => [formatRupiah(Number(value)), "Nominal"]}
                 contentStyle={{
-                  backgroundColor: "#121215",
-                  borderColor: "#27272a",
+                  backgroundColor: "#ffffff",
+                  borderColor: "#e2e8f0",
                   borderRadius: "12px",
                   fontSize: "12px",
-                  color: "#fff",
+                  color: "#0f172a",
+                  boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
                 }}
               />
             </PieChart>
           </ResponsiveContainer>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 text-[11px] pt-2 border-t border-[#27272a]">
+        <div className="grid grid-cols-2 gap-2 text-[11px] pt-2 border-t border-slate-100">
           {categoryData.slice(0, 4).map((cat) => (
             <div key={cat.name} className="flex items-center gap-1.5 truncate">
-              <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: cat.color }}></span>
-              <span className="text-zinc-400 truncate">{cat.name}</span>
+              <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: cat.color }}></span>
+              <span className="text-slate-600 font-medium truncate">{cat.name}</span>
             </div>
           ))}
         </div>

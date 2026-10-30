@@ -24,12 +24,11 @@ export default function Home() {
   const [isAddGoalOpen, setIsAddGoalOpen] = useState(false);
   const [depositingGoal, setDepositingGoal] = useState<SavingsGoalItem | null>(null);
 
-  // Fresh Real Data States (Initialized empty)
+  // Real Data States
   const [wallets, setWallets] = useState<WalletItem[]>([]);
   const [goals, setGoals] = useState<SavingsGoalItem[]>([]);
   const [transactions, setTransactions] = useState<TransactionItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
-
   const [currentMonthName, setCurrentMonthName] = useState("Periode Berjalan");
 
   // Fetch current authenticated user & month
@@ -165,7 +164,6 @@ export default function Home() {
 
   // Handle Deposit to Goal (Local + Supabase Sync)
   const handleDepositGoal = async (goalId: string, walletId: string, amount: number) => {
-    // 1. Deduct from wallet
     const sourceWallet = wallets.find((w) => w.id === walletId);
     if (!sourceWallet || sourceWallet.balance < amount) {
       alert("Saldo dompet tidak mencukupi untuk melakukan setoran tabungan ini.");
@@ -176,13 +174,11 @@ export default function Home() {
       prev.map((w) => (w.id === walletId ? { ...w, balance: w.balance - amount } : w))
     );
 
-    // 2. Add to goal
     const targetGoal = goals.find((g) => g.id === goalId);
     setGoals((prev) =>
       prev.map((g) => (g.id === goalId ? { ...g, currentAmount: g.currentAmount + amount } : g))
     );
 
-    // 3. Record transaction as transfer to savings
     const depositTx: TransactionItem = {
       id: "tx-" + Date.now(),
       type: "TRANSFER",
@@ -196,7 +192,6 @@ export default function Home() {
     };
     setTransactions((prev) => [depositTx, ...prev]);
 
-    // Sync to Supabase
     try {
       await fetch("/api/data", {
         method: "POST",
@@ -211,7 +206,7 @@ export default function Home() {
     }
   };
 
-  // Real Metric Calculations
+  // Metrics
   const totalNetWorth = wallets.reduce((acc, curr) => acc + curr.balance, 0);
 
   const monthlyIncome = transactions
@@ -223,9 +218,9 @@ export default function Home() {
     .reduce((acc, curr) => acc + curr.amount, 0);
 
   const totalSavings = goals.reduce((acc, curr) => acc + curr.currentAmount, 0);
-  const budgetLimit = 8000000; // default initial target budget
+  const budgetLimit = 8000000;
 
-  // Dynamic Category Breakdown from Real Expenses
+  // Category Breakdown
   const categoryMap = new Map<string, number>();
   transactions
     .filter((t) => t.type === "EXPENSE")
@@ -234,7 +229,7 @@ export default function Home() {
       categoryMap.set(t.category, current + t.amount);
     });
 
-  const categoryColors = ["#10b981", "#0ea5e9", "#f59e0b", "#8b5cf6", "#ec4899", "#14b8a6", "#6366f1"];
+  const categoryColors = ["#2563eb", "#3b82f6", "#0ea5e9", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"];
   const dynamicCategoryData = Array.from(categoryMap.entries()).map(([name, value], i) => ({
     name,
     value,
@@ -244,16 +239,14 @@ export default function Home() {
   const categoryData =
     dynamicCategoryData.length > 0
       ? dynamicCategoryData
-      : [{ name: "Belum Ada Pengeluaran", value: 1, color: "#27272a" }];
+      : [{ name: "Belum Ada Pengeluaran", value: 1, color: "#cbd5e1" }];
 
-  // Dynamic Cash Flow Data
   const dynamicCashFlowData = [
-    { month: "Aktif", pemasukan: monthlyIncome, pengeluaran: monthlyExpense },
+    { month: "Bulan Ini", pemasukan: monthlyIncome, pengeluaran: monthlyExpense },
   ];
 
-
   return (
-    <div className="flex min-h-screen bg-[#09090b] text-zinc-100 font-sans selection:bg-emerald-500/30 selection:text-emerald-300">
+    <div className="flex min-h-screen bg-[#f1f5f9] text-slate-800 font-sans selection:bg-blue-100 selection:text-blue-700">
       {/* NAVIGATION */}
       <Navigation
         activeTab={activeTab}
@@ -262,26 +255,26 @@ export default function Home() {
         currentUser={currentUser}
       />
 
-      {/* MAIN CONTENT WRAPPER */}
+      {/* MAIN CONTENT */}
       <main className="flex-1 flex flex-col min-w-0 pb-24 md:pb-10">
-        {/* TOPBAR */}
-        <header className="h-16 border-b border-[#27272a] px-6 flex items-center justify-between bg-[#09090b]/80 backdrop-blur-md sticky top-0 z-30">
+        {/* TOPBAR (TAILADMIN CLEAN HEADER) */}
+        <header className="h-16 border-b border-slate-200/80 px-6 sm:px-8 flex items-center justify-between bg-white sticky top-0 z-30 shadow-2xs">
           <div>
-            <h1 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
+            <h1 className="text-base font-bold text-slate-900 tracking-tight flex items-center gap-2">
               Halo, {currentUser?.name || "Monn"}
-              <span className="text-xs font-normal text-zinc-500 hidden sm:inline">• Periode {currentMonthName}</span>
+              <span className="text-xs font-normal text-slate-500 hidden sm:inline">• Periode {currentMonthName}</span>
             </h1>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#121215] border border-[#27272a] text-xs text-zinc-400">
-              <Heart className="w-3.5 h-3.5 text-rose-400" />
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs text-slate-600 font-medium">
+              <Heart className="w-3.5 h-3.5 text-rose-500" />
               <span>Ruang Keuangan {currentUser?.user === "partner" ? "Pasangan" : "Bersama"}</span>
             </div>
 
             <button
               onClick={() => setIsQuickAddOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-semibold shadow-sm transition-all active:scale-95 cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm shadow-blue-500/20 transition-all active:scale-95 cursor-pointer"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
               <span className="hidden sm:inline">Catat Transaksi</span>
@@ -289,34 +282,34 @@ export default function Home() {
           </div>
         </header>
 
-        {/* BODY CONTENT BY TAB */}
+        {/* BODY */}
         <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl w-full mx-auto">
           {/* WELCOME BANNER ON FRESH START */}
           {wallets.length === 0 && (
-            <div className="p-5 rounded-2xl bg-[#121215] border border-emerald-500/30 shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="p-6 rounded-2xl bg-white border border-blue-200 shadow-sm shadow-blue-500/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <Sparkles className="w-4 h-4 text-emerald-400" />
-                  <h3 className="text-sm font-bold text-white">Selamat Datang di FinTrack!</h3>
+                  <Sparkles className="w-4 h-4 text-blue-600" />
+                  <h3 className="text-sm font-bold text-slate-900">Selamat Datang di FinTrack!</h3>
                 </div>
-                <p className="text-xs text-zinc-400 leading-relaxed max-w-xl">
-                  Sistem telah dikosongkan dan siap untuk mencatat data riil Anda. Langkah pertama: buat dompet atau rekening bank Anda untuk mulai mencatat saldo riil.
+                <p className="text-xs text-slate-600 leading-relaxed max-w-xl font-medium">
+                  Sistem pencatatan keuangan Anda siap digunakan. Tambahkan rekening bank, dompet digital, atau uang tunai Anda untuk mulai mengelola keuangan secara profesional.
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <button
                   onClick={() => setIsAddWalletOpen(true)}
-                  className="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shadow-sm"
+                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shadow-sm shadow-blue-500/20"
                 >
                   <Building2 className="w-4 h-4" />
-                  <span>Tambah Dompet Baru</span>
+                  <span>Tambah Dompet</span>
                 </button>
                 <button
                   onClick={() => setIsAddGoalOpen(true)}
-                  className="px-3.5 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-medium flex items-center gap-2 transition-all cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer"
                 >
-                  <PiggyBank className="w-4 h-4" />
+                  <PiggyBank className="w-4 h-4 text-slate-600" />
                   <span>Buat Target</span>
                 </button>
               </div>
@@ -325,7 +318,7 @@ export default function Home() {
 
           {activeTab === "dashboard" && (
             <>
-              {/* 1. METRIC CARDS */}
+              {/* 1. METRICS */}
               <MetricCards
                 netWorth={totalNetWorth}
                 monthlyIncome={monthlyIncome}
@@ -334,7 +327,7 @@ export default function Home() {
                 budgetLimit={budgetLimit}
               />
 
-              {/* 2. AI FINANCIAL ADVISOR WIDGET */}
+              {/* 2. AI ADVISOR */}
               <AiAdvisorWidget
                 summary={{
                   totalBalance: totalNetWorth,
@@ -353,13 +346,13 @@ export default function Home() {
                 categoryData={categoryData}
               />
 
-              {/* 4. WALLETS PREVIEW */}
+              {/* 4. WALLETS */}
               <WalletList
                 wallets={wallets}
                 onAddWallet={() => setIsAddWalletOpen(true)}
               />
 
-              {/* 5. SAVINGS GOALS */}
+              {/* 5. GOALS */}
               <SavingsGoalsList
                 goals={goals}
                 onAddGoal={() => setIsAddGoalOpen(true)}
@@ -369,7 +362,7 @@ export default function Home() {
                 }}
               />
 
-              {/* 6. RECENT TRANSACTIONS */}
+              {/* 6. TRANSACTIONS */}
               <TransactionFeed transactions={transactions} />
             </>
           )}
@@ -413,7 +406,7 @@ export default function Home() {
         </div>
       </main>
 
-      {/* MODAL 1: QUICK ADD TRANSACTION (SMART AI + MANUAL) */}
+      {/* MODALS */}
       <QuickAddModal
         isOpen={isQuickAddOpen}
         onClose={() => setIsQuickAddOpen(false)}
@@ -421,21 +414,18 @@ export default function Home() {
         onAddTransaction={handleAddTransaction}
       />
 
-      {/* MODAL 2: ADD NEW WALLET */}
       <AddWalletModal
         isOpen={isAddWalletOpen}
         onClose={() => setIsAddWalletOpen(false)}
         onAddWallet={handleAddWallet}
       />
 
-      {/* MODAL 3: ADD NEW SAVINGS GOAL */}
       <AddGoalModal
         isOpen={isAddGoalOpen}
         onClose={() => setIsAddGoalOpen(false)}
         onAddGoal={handleAddGoal}
       />
 
-      {/* MODAL 4: DEPOSIT TO GOAL */}
       <DepositGoalModal
         isOpen={!!depositingGoal}
         onClose={() => setDepositingGoal(null)}
