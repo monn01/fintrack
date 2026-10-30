@@ -5,12 +5,28 @@ export async function POST(req: NextRequest) {
   try {
     const { username, password } = await req.json();
 
-    const monnPassword = process.env.AUTH_MONN_PASSWORD || "monn123";
-    const partnerPassword = process.env.AUTH_PARTNER_PASSWORD || "partner123";
+    if (!username || !password) {
+      return NextResponse.json(
+        { error: "Username dan kata sandi wajib diisi." },
+        { status: 400 }
+      );
+    }
+
+    const cleanUser = username.trim().toLowerCase();
+    const cleanPass = password.trim();
+
+    const monnUser = (process.env.AUTH_MONN_USERNAME || "monn").trim().toLowerCase();
+    const monnPassword = (process.env.AUTH_MONN_PASSWORD || "monn123").trim();
+
+    const partnerUser = (process.env.AUTH_PARTNER_USERNAME || "pasangan").trim().toLowerCase();
+    const partnerPassword = (process.env.AUTH_PARTNER_PASSWORD || "partner123").trim();
 
     let session: AuthSession | null = null;
 
-    if (username.toLowerCase() === "monn" && password === monnPassword) {
+    if (
+      (cleanUser === monnUser || cleanUser === "monn" || cleanUser === "admin") &&
+      cleanPass === monnPassword
+    ) {
       session = {
         user: "monn",
         name: "Monn",
@@ -18,8 +34,8 @@ export async function POST(req: NextRequest) {
         createdAt: Date.now(),
       };
     } else if (
-      (username.toLowerCase() === "pasangan" || username.toLowerCase() === "partner") &&
-      password === partnerPassword
+      (cleanUser === partnerUser || cleanUser === "pasangan" || cleanUser === "partner") &&
+      cleanPass === partnerPassword
     ) {
       session = {
         user: "partner",
@@ -31,7 +47,7 @@ export async function POST(req: NextRequest) {
 
     if (!session) {
       return NextResponse.json(
-        { error: "Username atau kata sandi tidak valid." },
+        { error: "Username atau kata sandi tidak cocok. Silakan periksa kembali." },
         { status: 401 }
       );
     }
