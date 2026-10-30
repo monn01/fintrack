@@ -57,17 +57,17 @@ export default function BankingHero({
         <div className="flex items-center gap-2.5">
           <button
             onClick={onOpenQuickAdd}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0052cc] hover:bg-[#0747a6] text-white text-xs sm:text-sm font-semibold transition-all active:scale-95 shadow-sm cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0052cc] hover:bg-[#0747a6] text-white text-xs sm:text-sm font-semibold transition-all shadow-sm cursor-pointer btn-tactile"
           >
-            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <Plus className="w-4 h-4 stroke-[2.5] icon-pop" />
             <span>Catat Transaksi</span>
           </button>
 
           <button
             onClick={onOpenAddWallet}
-            className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold transition-all cursor-pointer btn-tactile"
           >
-            <CreditCard className="w-4 h-4" />
+            <CreditCard className="w-4 h-4 icon-pop" />
             <span>Tambah Rekening</span>
           </button>
         </div>
@@ -76,14 +76,16 @@ export default function BankingHero({
       {/* CENTER: PRIMARY BALANCE DISPLAY (BIG & READABLE LIKE DIGITAL BANKING) */}
       <div className="pt-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
         {/* TOTAL BALANCE HERO CARD */}
-        <div className="lg:col-span-6 bg-gradient-to-br from-[#0052cc] to-[#0747a6] rounded-2xl p-6 text-white shadow-sm relative overflow-hidden">
+        <div className="lg:col-span-6 bg-gradient-to-br from-[#0052cc] to-[#0747a6] rounded-2xl p-6 text-white shadow-sm relative overflow-hidden card-tap">
           <div className="flex items-center justify-between text-blue-100 text-xs font-semibold mb-2">
             <span>TOTAL SALDO AKTIF</span>
             <button
               onClick={() => setShowBalance(!showBalance)}
-              className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer text-xs"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 hover:text-white transition-all cursor-pointer text-xs btn-tactile"
             >
-              {showBalance ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              <span className="icon-pop">
+                {showBalance ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </span>
               <span>{showBalance ? "Sembunyikan" : "Tampilkan"}</span>
             </button>
           </div>

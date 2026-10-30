@@ -145,7 +145,7 @@ export default function FinancePromoBanners({ onOpenAddGoal, monthlyExpense = 0 
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
           <button
             onClick={() => setFilterCategory("all")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer btn-tactile ${
               filterCategory === "all"
                 ? "bg-[#0052cc] text-white shadow-xs"
                 : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
@@ -155,7 +155,7 @@ export default function FinancePromoBanners({ onOpenAddGoal, monthlyExpense = 0 
           </button>
           <button
             onClick={() => setFilterCategory("invest")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer btn-tactile ${
               filterCategory === "invest"
                 ? "bg-[#0052cc] text-white shadow-xs"
                 : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
@@ -165,7 +165,7 @@ export default function FinancePromoBanners({ onOpenAddGoal, monthlyExpense = 0 
           </button>
           <button
             onClick={() => setFilterCategory("tips")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer btn-tactile ${
               filterCategory === "tips"
                 ? "bg-[#0052cc] text-white shadow-xs"
                 : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
@@ -175,7 +175,7 @@ export default function FinancePromoBanners({ onOpenAddGoal, monthlyExpense = 0 
           </button>
           <button
             onClick={() => setFilterCategory("couple")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer btn-tactile ${
               filterCategory === "couple"
                 ? "bg-[#0052cc] text-white shadow-xs"
                 : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
@@ -192,7 +192,7 @@ export default function FinancePromoBanners({ onOpenAddGoal, monthlyExpense = 0 
           <div
             key={item.id}
             onClick={() => setSelectedPromo(item)}
-            className="group relative bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition-all duration-300 overflow-hidden cursor-pointer flex flex-col justify-between"
+            className="group relative bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition-all duration-300 overflow-hidden cursor-pointer flex flex-col justify-between card-tap"
           >
             {/* Image Banner */}
             <div className="relative w-full aspect-[2/1] overflow-hidden bg-slate-900">
@@ -229,7 +229,7 @@ export default function FinancePromoBanners({ onOpenAddGoal, monthlyExpense = 0 
                 <span className="flex items-center gap-1 group-hover:underline">
                   {item.ctaText}
                 </span>
-                <div className="w-7 h-7 rounded-full bg-blue-50 group-hover:bg-[#0052cc] group-hover:text-white flex items-center justify-center transition-colors">
+                <div className="w-7 h-7 rounded-full bg-blue-50 group-hover:bg-[#0052cc] group-hover:text-white flex items-center justify-center transition-colors icon-pop">
                   <ArrowRight className="w-3.5 h-3.5" />
                 </div>
               </div>
@@ -376,7 +376,7 @@ export default function FinancePromoBanners({ onOpenAddGoal, monthlyExpense = 0 
                       setSelectedPromo(null);
                       onOpenAddGoal();
                     }}
-                    className="flex-1 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs sm:text-sm font-bold transition-all shadow-xs cursor-pointer flex items-center justify-center gap-1.5"
+                    className="flex-1 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs sm:text-sm font-bold transition-all shadow-xs cursor-pointer flex items-center justify-center gap-1.5 btn-tactile"
                   >
                     <Heart className="w-4 h-4 fill-white" />
                     Buat Target Bersama Sekarang
@@ -384,14 +384,14 @@ export default function FinancePromoBanners({ onOpenAddGoal, monthlyExpense = 0 
                 ) : (
                   <button
                     onClick={() => setSelectedPromo(null)}
-                    className="flex-1 py-2.5 rounded-xl bg-[#0052cc] hover:bg-[#0747a6] text-white text-xs sm:text-sm font-bold transition-all shadow-xs cursor-pointer"
+                    className="flex-1 py-2.5 rounded-xl bg-[#0052cc] hover:bg-[#0747a6] text-white text-xs sm:text-sm font-bold transition-all shadow-xs cursor-pointer btn-tactile"
                   >
                     Mengerti & Terapkan
                   </button>
                 )}
                 <button
                   onClick={() => setSelectedPromo(null)}
-                  className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold transition-all cursor-pointer btn-tactile"
                 >
                   Tutup
                 </button>

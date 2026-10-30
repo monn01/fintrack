@@ -44,9 +44,9 @@ export default function WalletList({ wallets, onAddWallet }: WalletListProps) {
         {onAddWallet && (
           <button
             onClick={onAddWallet}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold transition-all cursor-pointer btn-tactile"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 icon-pop" />
             <span>Tambah Rekening</span>
           </button>
         )}
@@ -54,7 +54,7 @@ export default function WalletList({ wallets, onAddWallet }: WalletListProps) {
 
       {wallets.length === 0 ? (
         <div className="py-12 px-4 rounded-xl bg-slate-50 border border-dashed border-slate-200 text-center flex flex-col items-center justify-center">
-          <div className="w-12 h-12 rounded-xl bg-blue-100 text-[#0052cc] flex items-center justify-center mb-3 shadow-2xs">
+          <div className="w-12 h-12 rounded-xl bg-blue-100 text-[#0052cc] flex items-center justify-center mb-3 shadow-2xs icon-pop">
             <CreditCard className="w-6 h-6" />
           </div>
           <p className="text-sm font-bold text-slate-800">Belum ada rekening atau dompet terdaftar</p>
@@ -64,9 +64,9 @@ export default function WalletList({ wallets, onAddWallet }: WalletListProps) {
           {onAddWallet && (
             <button
               onClick={onAddWallet}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0052cc] hover:bg-[#0747a6] text-white text-xs font-bold transition-all cursor-pointer shadow-sm"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0052cc] hover:bg-[#0747a6] text-white text-xs font-bold transition-all cursor-pointer shadow-sm btn-tactile"
             >
-              <Plus className="w-4 h-4 stroke-[2.5]" />
+              <Plus className="w-4 h-4 stroke-[2.5] icon-pop" />
               <span>Tambah Rekening Pertama</span>
             </button>
           )}
@@ -80,7 +80,7 @@ export default function WalletList({ wallets, onAddWallet }: WalletListProps) {
             return (
               <div
                 key={wallet.id}
-                className="p-5 rounded-xl bg-white border border-slate-200 hover:border-blue-400 hover:shadow-sm transition-all flex flex-col justify-between group"
+                className="p-5 rounded-xl bg-white border border-slate-200 hover:border-blue-400 hover:shadow-sm transition-all flex flex-col justify-between group card-tap"
               >
                 <div>
                   <div className="flex items-start justify-between mb-3">

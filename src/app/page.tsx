@@ -276,9 +276,9 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsQuickAddOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#0052cc] hover:bg-[#0747a6] text-white text-xs sm:text-sm font-semibold shadow-xs transition-all active:scale-95 cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#0052cc] hover:bg-[#0747a6] text-white text-xs sm:text-sm font-semibold shadow-xs transition-all cursor-pointer btn-tactile"
             >
-              <Plus className="w-4 h-4 stroke-[2.5]" />
+              <Plus className="w-4 h-4 stroke-[2.5] icon-pop" />
               <span className="hidden sm:inline">Catat Transaksi</span>
             </button>
 
@@ -289,9 +289,9 @@ export default function Home() {
                 router.refresh();
               }}
               title="Keluar dari akun"
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 text-xs sm:text-sm font-semibold transition-all cursor-pointer btn-tactile"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-4 h-4 icon-pop" />
               <span className="hidden sm:inline">Keluar</span>
             </button>
           </div>

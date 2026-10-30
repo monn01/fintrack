@@ -182,15 +182,17 @@ export default function FinancialCalendar({
             <div className="flex items-center gap-1">
               <button
                 onClick={handlePrevMonth}
-                className="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer transition-colors"
+                aria-label="Bulan Sebelumnya"
+                className="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer transition-colors btn-tactile"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-5 h-5 icon-pop" />
               </button>
               <button
                 onClick={handleNextMonth}
-                className="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer transition-colors"
+                aria-label="Bulan Berikutnya"
+                className="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 cursor-pointer transition-colors btn-tactile"
               >
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRight className="w-5 h-5 icon-pop" />
               </button>
             </div>
           </div>
@@ -233,7 +235,7 @@ export default function FinancialCalendar({
                 <button
                   key={dayNum}
                   onClick={() => setSelectedDate(dateString)}
-                  className={`h-14 sm:h-16 p-1.5 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer relative ${
+                  className={`h-14 sm:h-16 p-1.5 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer relative btn-tactile ${
                     isSelected
                       ? "border-[#0052cc] bg-blue-50/60 ring-2 ring-blue-500/20 shadow-xs"
                       : "border-slate-200/70 hover:border-slate-300 bg-white hover:bg-slate-50/50"
@@ -350,19 +352,19 @@ export default function FinancialCalendar({
                       <button
                         onClick={() => onTogglePaid(item.id)}
                         title={item.isPaid ? "Tandai Belum Lunas" : "Tandai Sudah Dibayar"}
-                        className={`p-2 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                        className={`p-2 rounded-xl border text-xs font-bold transition-all cursor-pointer btn-tactile ${
                           item.isPaid
-                            ? "bg-emerald-600 text-white border-emerald-600"
+                            ? "bg-emerald-600 text-white border-emerald-600 shadow-xs"
                             : "bg-white hover:bg-slate-100 text-slate-600 border-slate-200"
                         }`}
                       >
-                        <Check className="w-4 h-4 stroke-[2.5]" />
+                        <Check className="w-4 h-4 stroke-[2.5] icon-pop" />
                       </button>
 
                       <button
                         onClick={() => onDeletePlan(item.id)}
                         title="Hapus Agenda"
-                        className="p-2 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors cursor-pointer"
+                        className="p-2 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors cursor-pointer icon-pop"
                       >
                         <X className="w-4 h-4" />
                       </button>

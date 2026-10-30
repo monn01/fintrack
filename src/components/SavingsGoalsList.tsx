@@ -50,9 +50,9 @@ export default function SavingsGoalsList({ goals, onAddGoal, onDepositGoal }: Sa
           {onAddGoal && (
             <button
               onClick={onAddGoal}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-all cursor-pointer shadow-sm shadow-blue-500/20"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-all cursor-pointer shadow-sm shadow-blue-500/20 btn-tactile"
             >
-              <Plus className="w-3.5 h-3.5" />
+              <Plus className="w-3.5 h-3.5 icon-pop" />
               <span>Buat Target Pertama</span>
             </button>
           )}
@@ -67,7 +67,7 @@ export default function SavingsGoalsList({ goals, onAddGoal, onDepositGoal }: Sa
             return (
               <div
                 key={goal.id}
-                className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/90 hover:border-blue-300 transition-all flex flex-col justify-between shadow-2xs"
+                className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/90 hover:border-blue-300 transition-all flex flex-col justify-between shadow-2xs card-tap"
               >
                 <div>
                   <div className="flex items-start justify-between gap-2 mb-2">
@@ -124,9 +124,9 @@ export default function SavingsGoalsList({ goals, onAddGoal, onDepositGoal }: Sa
                 {onDepositGoal && !isComplete && (
                   <button
                     onClick={() => onDepositGoal(goal.id)}
-                    className="mt-2 w-full py-2 px-3 rounded-xl bg-white hover:bg-blue-50 border border-slate-200 text-xs font-semibold text-blue-700 transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                    className="mt-2 w-full py-2 px-3 rounded-xl bg-white hover:bg-blue-50 border border-slate-200 text-xs font-semibold text-blue-700 transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs btn-tactile"
                   >
-                    <Plus className="w-3.5 h-3.5" />
+                    <Plus className="w-3.5 h-3.5 icon-pop" />
                     <span>Setor Tabungan</span>
                   </button>
                 )}

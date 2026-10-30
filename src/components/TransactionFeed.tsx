@@ -69,9 +69,9 @@ export default function TransactionFeed({ transactions }: TransactionFeedProps) 
               <button
                 key={tab.id}
                 onClick={() => setFilterType(tab.id)}
-                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer btn-tactile ${
                   filterType === tab.id
-                    ? "bg-white text-[#0052cc] shadow-xs"
+                    ? "bg-white text-[#0052cc] shadow-xs font-bold"
                     : "text-slate-600 hover:text-slate-900"
                 }`}
               >

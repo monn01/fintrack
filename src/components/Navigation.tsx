@@ -89,13 +89,13 @@ export default function Navigation({
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer btn-tactile ${
                     isActive
-                      ? "bg-blue-50 text-[#0052cc] border border-blue-200/60"
+                      ? "bg-blue-50 text-[#0052cc] border border-blue-200/80 shadow-2xs"
                       : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                   }`}
                 >
-                  <Icon className={`w-4 h-4 stroke-[2] ${isActive ? "text-[#0052cc]" : "text-slate-400"}`} />
+                  <Icon className={`w-4 h-4 stroke-[2] icon-pop ${isActive ? "text-[#0052cc] scale-110" : "text-slate-400"}`} />
                   <span>{item.label}</span>
                 </button>
               );
@@ -127,7 +127,7 @@ export default function Navigation({
             <button
               onClick={handleLogout}
               title="Keluar dari akun"
-              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer icon-pop"
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -135,57 +135,69 @@ export default function Navigation({
         </div>
       </aside>
 
-      {/* MOBILE BOTTOM NAVIGATION BAR (POLISHED FOR HUMAN THUMBS) */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1.5 flex items-center justify-around shadow-lg safe-area-bottom">
+      {/* MOBILE BOTTOM NAVIGATION BAR (HIGHLY TACTILE & RESPONSIVE LIKE GOPAY/MYBCA) */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1 flex items-center justify-around shadow-lg safe-area-bottom">
         <button
           onClick={() => setActiveTab("dashboard")}
-          className={`flex flex-col items-center justify-center flex-1 py-1 cursor-pointer transition-colors ${
+          className={`flex flex-col items-center justify-center flex-1 py-1 cursor-pointer nav-tab-tap ${
             activeTab === "dashboard" ? "text-[#0052cc] font-bold" : "text-slate-500 hover:text-slate-800"
           }`}
         >
-          <LayoutDashboard className="w-5 h-5" />
+          <div className={`p-1 rounded-xl transition-all ${activeTab === "dashboard" ? "bg-blue-50 text-[#0052cc]" : ""}`}>
+            <LayoutDashboard className="w-5 h-5 icon-pop" />
+          </div>
           <span className="text-[11px] mt-0.5">Home</span>
+          {activeTab === "dashboard" && <span className="w-1.5 h-1.5 rounded-full bg-[#0052cc] -mb-1 animate-pulse" />}
         </button>
 
         <button
           onClick={() => setActiveTab("calendar")}
-          className={`flex flex-col items-center justify-center flex-1 py-1 cursor-pointer transition-colors ${
+          className={`flex flex-col items-center justify-center flex-1 py-1 cursor-pointer nav-tab-tap ${
             activeTab === "calendar" ? "text-[#0052cc] font-bold" : "text-slate-500 hover:text-slate-800"
           }`}
         >
-          <Calendar className="w-5 h-5" />
+          <div className={`p-1 rounded-xl transition-all ${activeTab === "calendar" ? "bg-blue-50 text-[#0052cc]" : ""}`}>
+            <Calendar className="w-5 h-5 icon-pop" />
+          </div>
           <span className="text-[11px] mt-0.5">Tagihan</span>
+          {activeTab === "calendar" && <span className="w-1.5 h-1.5 rounded-full bg-[#0052cc] -mb-1 animate-pulse" />}
         </button>
 
-        {/* FLOATING ACTION BUTTON */}
+        {/* FLOATING ACTION BUTTON WITH ANIMATED PRESS FEEDBACK */}
         <div className="flex-1 flex justify-center -mt-6">
           <button
             onClick={onOpenQuickAdd}
             aria-label="Catat Transaksi"
-            className="w-13 h-13 rounded-full bg-[#0052cc] text-white flex items-center justify-center shadow-lg shadow-blue-500/35 active:scale-95 transition-transform cursor-pointer border-2 border-white"
+            className="group w-13 h-13 rounded-full bg-[#0052cc] hover:bg-[#0747a6] text-white flex items-center justify-center shadow-lg shadow-blue-500/40 active:scale-90 active:ring-4 active:ring-blue-300/60 hover:scale-105 transition-all duration-150 cursor-pointer border-2 border-white"
           >
-            <Plus className="w-6 h-6 stroke-[2.5]" />
+            <Plus className="w-6 h-6 stroke-[2.5] group-active:scale-90 group-hover:rotate-90 transition-transform duration-200" />
           </button>
         </div>
 
         <button
           onClick={() => setActiveTab("transactions")}
-          className={`flex flex-col items-center justify-center flex-1 py-1 cursor-pointer transition-colors ${
+          className={`flex flex-col items-center justify-center flex-1 py-1 cursor-pointer nav-tab-tap ${
             activeTab === "transactions" ? "text-[#0052cc] font-bold" : "text-slate-500 hover:text-slate-800"
           }`}
         >
-          <ArrowLeftRight className="w-5 h-5" />
+          <div className={`p-1 rounded-xl transition-all ${activeTab === "transactions" ? "bg-blue-50 text-[#0052cc]" : ""}`}>
+            <ArrowLeftRight className="w-5 h-5 icon-pop" />
+          </div>
           <span className="text-[11px] mt-0.5">Mutasi</span>
+          {activeTab === "transactions" && <span className="w-1.5 h-1.5 rounded-full bg-[#0052cc] -mb-1 animate-pulse" />}
         </button>
 
         <button
           onClick={() => setActiveTab("wallets")}
-          className={`flex flex-col items-center justify-center flex-1 py-1 cursor-pointer transition-colors ${
+          className={`flex flex-col items-center justify-center flex-1 py-1 cursor-pointer nav-tab-tap ${
             activeTab === "wallets" ? "text-[#0052cc] font-bold" : "text-slate-500 hover:text-slate-800"
           }`}
         >
-          <Wallet className="w-5 h-5" />
+          <div className={`p-1 rounded-xl transition-all ${activeTab === "wallets" ? "bg-blue-50 text-[#0052cc]" : ""}`}>
+            <Wallet className="w-5 h-5 icon-pop" />
+          </div>
           <span className="text-[11px] mt-0.5">Rekening</span>
+          {activeTab === "wallets" && <span className="w-1.5 h-1.5 rounded-full bg-[#0052cc] -mb-1 animate-pulse" />}
         </button>
       </div>
     </>
