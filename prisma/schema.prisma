@@ -1,0 +1,187 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String        @id @default(uuid())
+  email         String        @unique
+  name          String?
+  avatarUrl     String?
+  role          UserRole      @default(MEMBER)
+  
+  householdId   String?
+  household     Household?    @relation(fields: [householdId], references: [id], onDelete: SetNull)
+  
+  wallets       Wallet[]
+  transactions  Transaction[]
+  budgets       Budget[]
+  savingsGoals  SavingsGoal[]
+  aiInsights    AiInsight[]
+  customCats    Category[]
+  
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model Household {
+  id            String        @id @default(uuid())
+  name          String
+  inviteCode    String        @unique @default(nanoid(8))
+  
+  users         User[]
+  sharedWallets Wallet[]
+  sharedGoals   SavingsGoal[]
+  
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model Wallet {
+  id                  String        @id @default(uuid())
+  name                String
+  type                WalletType    @default(BANK)
+  balance             Decimal       @default(0)
+  currency            String        @default("IDR")
+  isShared            Boolean       @default(false)
+  accountNumber       String?
+  icon                String?
+  color               String?
+  
+  userId              String
+  user                User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  householdId         String?
+  household           Household?    @relation(fields: [householdId], references: [id], onDelete: SetNull)
+  
+  transactions        Transaction[] @relation("SourceWallet")
+  incomingTransfers   Transaction[] @relation("DestinationWallet")
+  
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+}
+
+model Category {
+  id            String          @id @default(uuid())
+  name          String
+  type          TransactionType @default(EXPENSE)
+  icon          String?
+  color         String?
+  isDefault     Boolean         @default(false)
+  
+  userId        String?
+  user          User?           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  transactions  Transaction[]
+  budgets       Budget[]
+  
+  createdAt     DateTime        @default(now())
+}
+
+model Transaction {
+  id                  String          @id @default(uuid())
+  type                TransactionType @default(EXPENSE)
+  amount              Decimal
+  date                DateTime        @default(now())
+  description         String?
+  tags                String[]        @default([])
+  receiptUrl          String?
+  isRecurring         Boolean         @default(false)
+  
+  walletId            String
+  wallet              Wallet          @relation("SourceWallet", fields: [walletId], references: [id], onDelete: Cascade)
+  
+  destinationWalletId String?
+  destinationWallet   Wallet?         @relation("DestinationWallet", fields: [destinationWalletId], references: [id], onDelete: SetNull)
+  
+  categoryId          String?
+  category            Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  
+  userId              String
+  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+}
+
+model Budget {
+  id            String          @id @default(uuid())
+  amount        Decimal         // Target limit pengeluaran per bulan
+  periodMonth   Int             // 1 - 12
+  periodYear    Int             // e.g. 2026
+  
+  categoryId    String
+  category      Category        @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  
+  userId        String
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@unique([userId, categoryId, periodMonth, periodYear])
+}
+
+model SavingsGoal {
+  id            String          @id @default(uuid())
+  title         String
+  targetAmount  Decimal
+  currentAmount Decimal         @default(0)
+  targetDate    DateTime?
+  icon          String?
+  color         String?
+  isShared      Boolean         @default(false)
+  isCompleted   Boolean         @default(false)
+  
+  userId        String
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  householdId   String?
+  household     Household?      @relation(fields: [householdId], references: [id], onDelete: SetNull)
+  
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model AiInsight {
+  id            String          @id @default(uuid())
+  title         String
+  content       String
+  type          InsightType     @default(ADVICE)
+  metrics       Json?
+  isRead        Boolean         @default(false)
+  
+  userId        String
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime        @default(now())
+}
+
+enum UserRole {
+  OWNER
+  PARTNER
+  MEMBER
+}
+
+enum WalletType {
+  BANK
+  EWALLET
+  CASH
+  INVESTMENT
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+  TRANSFER
+}
+
+enum InsightType {
+  ADVICE
+  WARNING
+  MILESTONE
+  SAVING_TIP
+}

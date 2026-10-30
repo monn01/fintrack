@@ -1,26 +1,51 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #09090b;
+  --foreground: #fafafa;
+  --card: #121215;
+  --card-foreground: #fafafa;
+  --popover: #121215;
+  --popover-foreground: #fafafa;
+  --primary: #10b981;
+  --primary-foreground: #09090b;
+  --secondary: #27272a;
+  --secondary-foreground: #fafafa;
+  --muted: #1f1f23;
+  --muted-foreground: #a1a1aa;
+  --accent: #10b981;
+  --accent-foreground: #09090b;
+  --destructive: #f43f5e;
+  --destructive-foreground: #fafafa;
+  --border: #27272a;
+  --input: #27272a;
+  --ring: #10b981;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-destructive: var(--destructive);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Number / Currency styling helper */
+.font-numeric {
+  font-family: var(--font-mono), monospace;
+  font-variant-numeric: tabular-nums;
 }
